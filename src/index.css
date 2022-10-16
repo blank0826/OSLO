@@ -31,3 +31,7 @@ code {
 .student_card:hover {
   transform: scale(1.1);
 }
+
+.signinButton:hover {
+  background: #ffe6f7;
+}

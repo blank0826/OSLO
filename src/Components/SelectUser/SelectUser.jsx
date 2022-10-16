@@ -1,7 +1,5 @@
 import { React } from "react";
 // import { ProfDashboard } from "./Dashboard";
-import { GiTeacher } from "react-icons/gi";
-import { SiGooglescholar } from "react-icons/si";
 import teacher from "../../images/teacher.png";
 import student from "../../images/student.png";
 
@@ -10,12 +8,9 @@ export default function SelectUser() {
     <>
       <div
         className="bg-no-repeat bg-cover bg-center relative"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1951&amp;q=80)",
-        }}
+        style={{ background: "#937DC2" }}
       >
-        <div className="absolute bg-gradient-to-b from-green-500 to-green-400 opacity-75 inset-0 z-0"></div>
+        <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
         <div
           className="min-h-screen sm:flex sm:flex-row mx-0"
           style={{ justifyContent: "center" }}
