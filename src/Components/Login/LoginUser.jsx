@@ -78,7 +78,7 @@ export default function LoginUser() {
                     onChange={(event) => setPassword(event.target.value)}
                   />
                 </div>
-                {/* <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <input
                       id="remember_me"
@@ -94,11 +94,16 @@ export default function LoginUser() {
                     </label>
                   </div>
                   <div className="text-sm">
-                    <a href="#" className="text-green-400 hover:text-green-500">
+                    <a
+                      href="#"
+                      style={{
+                        color: "#937DC2",
+                      }}
+                    >
                       Forgot your password?
                     </a>
                   </div>
-                </div> */}
+                </div>
                 <div>
                   <button
                     type="submit"
