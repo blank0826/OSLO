@@ -31,3 +31,7 @@ code {
 .student_card:hover {
   transform: scale(1.1);
 }
+
+.icon1_rotate_180 {
+  transform: rotateX(180deg);
+}
