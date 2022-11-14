@@ -1,18 +1,17 @@
 import { React, useState } from "react";
 // import { ProfDashboard } from "./Dashboard";
 import { Link, useNavigate } from "react-router-dom";
-import { HandleLoginFirebaseUser } from "../../Firebase";
+import { HandleLoginFirebaseProf } from "../../Firebase";
 
-export default function LoginProf() {
+export default function LoginUser() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
-  const handleUserLogin = (e) => {
+  const handleProfLogin = (e) => {
     e.preventDefault();
-    console.log(email + " " + password);
-    HandleLoginFirebaseUser(navigate, email, password);
+    HandleLoginFirebaseProf(navigate, email, password);
     setEmail("");
     setPassword("");
   };
@@ -21,31 +20,25 @@ export default function LoginProf() {
     <>
       <div
         className="bg-no-repeat bg-cover bg-center relative"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1951&amp;q=80)",
-        }}
+        style={{ background: "#937DC2" }}
       >
-        <div className="absolute bg-gradient-to-b from-green-500 to-green-400 opacity-75 inset-0 z-0"></div>
+        <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
         <div
           className="min-h-screen sm:flex sm:flex-row mx-0"
           style={{ justifyContent: "space-evenly" }}
         >
-          <div className="flex-col flex  self-center p-10 sm:max-w-5xl xl:max-w-2xl  z-10">
-            <div className="self-start hidden lg:flex flex-col  text-white">
+          <div className="flex-col flex self-center p-10 sm:max-w-5xl xl:max-w-2xl  z-10">
+            <div className="self-start hidden lg:flex flex-col text-white">
               <img src="" className="mb-3" />
-              <h1 className="mb-3 font-bold text-5xl">
-                Hi ? Welcome Back Aji{" "}
-              </h1>
-              <p className="pr-3">
-                Lorem ipsum is placeholder text commonly used in the graphic,
-                print, and publishing industries for previewing layouts and
-                visual mockups
-              </p>
+              <h1 className="mb-3 font-bold text-6xl tracking-wider">OSLO</h1>
+              <p className="pr-3 text-4xl">One Stop Learning Opportunity </p>
             </div>
           </div>
           <div className="flex justify-center self-center  z-10">
-            <div className="p-12 bg-white mx-auto rounded-2xl w-100 ">
+            <div
+              className="p-12 bg-white mx-auto rounded-2xl w-100 "
+              style={{ width: "400px" }}
+            >
               <div className="mb-4">
                 <h3 className="font-semibold text-2xl text-gray-800">
                   Sign In{" "}
@@ -61,7 +54,7 @@ export default function LoginProf() {
                     className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
                     type="email"
                     name="email"
-                    id="email"
+                    id="emailProf"
                     placeholder="email@gmail.com"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
@@ -75,7 +68,7 @@ export default function LoginProf() {
                     className="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
                     type="password"
                     name="password"
-                    id="password"
+                    id="passwordProf"
                     placeholder="Password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
@@ -97,7 +90,11 @@ export default function LoginProf() {
                     </label>
                   </div>
                   <div className="text-sm">
-                    <a href="#" className="text-green-400 hover:text-green-500">
+                    <a
+                      href="#"
+                      // className="text-green-400 hover:text-green-500"
+                      style={{ color: "#937DC2" }}
+                    >
                       Forgot your password?
                     </a>
                   </div>
@@ -106,7 +103,8 @@ export default function LoginProf() {
                   <button
                     type="submit"
                     className="w-full flex justify-center bg-green-400  hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500"
-                    onClick={handleUserLogin}
+                    onClick={handleProfLogin}
+                    style={{ background: "#937DC2" }}
                   >
                     Sign in
                   </button>
@@ -120,26 +118,16 @@ export default function LoginProf() {
                   }}
                 >
                   <a
-                    href="/SigninUser"
+                    href="/SigninProf"
                     className="text-green-400 hover:text-green-500"
+                    style={{ color: "#937DC2" }}
                   >
                     Register User
                   </a>
                 </div>
               </div>
               <div className="pt-5 text-center text-gray-400 text-xs">
-                <span>
-                  Copyright © 2022-2023
-                  <a
-                    href="https://codepen.io/uidesignhub"
-                    rel=""
-                    target="_blank"
-                    title="Ajimon"
-                    className="text-green hover:text-green-500 "
-                  >
-                    AJI
-                  </a>
-                </span>
+                <span>Copyright © 2022-2023</span>
               </div>
             </div>
           </div>

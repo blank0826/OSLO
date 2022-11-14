@@ -149,7 +149,119 @@ const HandleSignupUser = (navigate, email, password, name, rollno, repeat) => {
         })
           .then(() => {
             // localStorage.setItem("SignedIn", flag);
-            navigate("/");
+            navigate("/LoginUser");
+            //send email verification
+          })
+          .catch((error) => {
+            const errorMessage = error.message;
+            window.alert(errorMessage);
+          });
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        window.alert(errorMessage);
+      });
+  }
+};
+
+const HandleLoginFirebaseProf = (navigate, email, password) => {
+  if (!validateField(email) || !validateField(password)) {
+    window.alert("Please fill all the fields.");
+  } else {
+    const profRef = ref(db, "professors/");
+    let array = [];
+    onValue(profRef, (snapshot) => {
+      let data = snapshot.val();
+      // console.log(typeof data);
+      // console.log(Object.keys(data).length);
+
+      if (data == null) {
+        alert("You have not registered!");
+        return;
+      }
+
+      array = Object.values(data);
+      console.log(array);
+
+      let val = array.find((c) => c.email == email);
+      if (val == null) {
+        alert("You have not registered!");
+        return;
+      } else {
+        if (val.email == email && val.password == password) {
+          signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              window.alert("Signed in!");
+              console.log(auth.currentUser.accessToken);
+              // if (!auth.currentUser.emailVerified) {
+              //   window.alert("Verify your email!");
+              // } else {
+              set(ref(db, "token/" + auth.currentUser.uid), {
+                token: auth.currentUser.accessToken,
+              }).catch((error) => {
+                window.alert(error.message);
+              });
+
+              // localStorage.setItem("Bearer", auth.currentUser.accessToken);
+              // localStorage.setItem("OrphanageId", id);
+              navigate("/DashboardProf");
+              // }
+            })
+            .catch((error) => {
+              const errorMessage = error.message;
+              window.alert(errorMessage);
+            });
+        } else {
+          // if (val.id != id) {
+          //   alert("You have not registered!");
+          // } else {
+          alert("Incorrect Email or Password");
+          //   }
+        }
+      }
+    });
+  }
+};
+
+const HandleSignupProf = (navigate, email, password, name, contact, repeat) => {
+  let flag = true;
+  // localStorage.setItem("SignedIn", "");
+
+  if (!validateEmail(email)) {
+    window.alert("Enter a valid email address!");
+    flag = false;
+  }
+
+  if (!validatePassword(password)) {
+    window.alert(
+      "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
+    );
+    flag = false;
+  }
+
+  if (password !== repeat) {
+    window.alert("Both passwords must be same!");
+    flag = false;
+  }
+
+  if (flag) {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        window.alert("User Created");
+        const user = userCredential.user;
+        writeProfData(user.uid, name, email, contact, password);
+        // sendEmailVerification(user).then(() => {
+        //   // Email verification sent!
+        //   let msg = "An email verification link has been sent to " + user.email;
+        //   window.alert(msg);
+        // });
+
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        })
+          .then(() => {
+            // localStorage.setItem("SignedIn", flag);
+            navigate("/LoginProf");
             //send email verification
           })
           .catch((error) => {
@@ -175,4 +287,21 @@ function writeUserData(userId, name, email, rollno) {
   });
 }
 
-export { HandleLoginFirebaseUser, HandleSignupUser };
+function writeProfData(userId, name, email, contact, password) {
+  console.log("inside write");
+  set(ref(db, "professors/" + userId), {
+    name: name,
+    email: email,
+    contact_number: contact,
+    password: password,
+  }).catch((error) => {
+    window.alert(error.message);
+  });
+}
+
+export {
+  HandleLoginFirebaseUser,
+  HandleSignupUser,
+  HandleLoginFirebaseProf,
+  HandleSignupProf,
+};
