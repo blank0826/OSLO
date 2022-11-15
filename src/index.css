@@ -32,6 +32,6 @@ code {
   transform: scale(1.1);
 }
 
-.signinButton:hover {
-  background: #ffe6f7;
+.icon1_rotate_180 {
+  transform: rotateX(180deg);
 }

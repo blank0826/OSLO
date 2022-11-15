@@ -1,333 +1,562 @@
-// import { React } from "react";
-// // import { ProfDashboard } from "./Dashboard";
-// import { GiMagnifyingGlass } from "react-icons/gi";
-// import { useEffect, useState } from "react";
-// import { Transition } from "@headlessui/react";
+import { useState } from "react";
+import { React } from "react";
+// import { ProfDashboard } from "./Dashboard";
+import ReactDOM from "react-dom";
+import { BsFillArrowRightSquareFill } from "react-icons/bs";
 
-// export default function UserDashboard() {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [state, setState] = useState("");
+export default function UserDashboard() {
+  const [open, setOpen] = useState(false);
 
-//   return (
-//     <>
-//       <nav
-//         className=" ml-3 mr-3 sticky top-0 z-50"
-//         style={{ backgroundColor: "#1a1c23" }}
-//       >
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//           <div className="flex items-center justify-between h-16">
-//             <div
-//               className="flex items-center mx-auto"
-//               style={{
-//                 width: "100%",
-//                 justifyContent: "space-between",
-//               }}
-//             >
-//               <div className="flex-shrink-0">
-//                 <img
-//                   style={{ width: "4rem", height: "4rem" }}
-//                   //   src={logo}
-//                   alt="Workflow"
-//                 />
-//               </div>
-//               <div className="hidden md:block">
-//                 <div
-//                   className="ml-10 flex items-baseline space-x-4"
-//                   style={{ width: "100%", justifyContent: "space-evenly" }}
-//                 >
-//                   <div className="relative text-gray-600">
-//                     <input
-//                       type="search"
-//                       name="search"
-//                       placeholder="Enter state"
-//                       className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none"
-//                       list="states"
-//                       id="input_state"
-//                       onChange={(e) => {
-//                         setState(e.target.value);
-//                       }}
-//                     />
-//                     <button
-//                       // className="absolute right-0 top-0 mr-4"
-//                       style={{ marginTop: "10px" }}
-//                       onClick={() => {
-//                         // loadDashboardOrphanage(state);
-//                       }}
-//                     >
-//                       <GiMagnifyingGlass
-//                         style={{ width: "1.5rem", height: "1.5rem" }}
-//                       />
-//                     </button>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="-mr-2 flex md:hidden">
-//               <button
-//                 onClick={() => setIsOpen(!isOpen)}
-//                 type="button"
-//                 className="bg-gray-900 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 mr-2"
-//                 aria-controls="mobile-menu"
-//                 aria-expanded="false"
-//               >
-//                 <span className="sr-only">Open main menu</span>
-//                 {!isOpen ? (
-//                   <svg
-//                     className="block h-6 w-6"
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     fill="none"
-//                     viewBox="0 0 24 24"
-//                     stroke="currentColor"
-//                     aria-hidden="true"
-//                   >
-//                     <path
-//                       strokeLinecap="round"
-//                       strokeLinejoin="round"
-//                       strokeWidth="2"
-//                       d="M4 6h16M4 12h16M4 18h16"
-//                     />
-//                   </svg>
-//                 ) : (
-//                   <svg
-//                     className="block h-6 w-6"
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     fill="none"
-//                     viewBox="0 0 24 24"
-//                     stroke="currentColor"
-//                     aria-hidden="true"
-//                   >
-//                     <path
-//                       strokeLinecap="round"
-//                       strokeLinejoin="round"
-//                       strokeWidth="2"
-//                       d="M6 18L18 6M6 6l12 12"
-//                     />
-//                   </svg>
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
+  return (
+    <div className="flex">
+      <div className="w-60 flex flex-col h-screen">
+        <div className="absolute mx-auto my-10">
+          <button onClick={() => setOpen(!open)}>
+            <BsFillArrowRightSquareFill
+              style={{ width: "2rem", height: "2rem" }}
+            />
+          </button>
+        </div>
+        <div
+          className={` ${
+            open ? "-translate-x-full" : "translate-x-0"
+          } flex-col h-screen p-3 duration-300 absolute`}
+          style={{ background: "#937DC2" }}
+        >
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Dashboard</h2>
+              <button onClick={() => setOpen(!open)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h8m-8 6h16"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center py-4">
+                <button
+                  type="submit"
+                  className="p-2 focus:outline-none focus:ring"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+              </span>
+              <input
+                type="search"
+                name="Search"
+                placeholder="Search..."
+                className="w-full py-2 pl-10 text-sm rounded-md focus:outline-none"
+              />
+            </div>
+            <div className="flex-1">
+              <ul className="pt-2 pb-4 space-y-1 text-sm">
+                <li className="rounded-sm" style={{ marginBottom: "1.25rem" }}>
+                  <a
+                    href="#"
+                    className="flex items-center p-2 space-x-3 rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-100"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+                    <span className="text-gray-100">Home</span>
+                  </a>
+                </li>
+                <li className="rounded-sm" style={{ marginBottom: "1.25rem" }}>
+                  <a
+                    href="#"
+                    className="flex items-center p-2 space-x-3 rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-100"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                      />
+                    </svg>
+                    <span className="text-gray-100">Inbox</span>
+                  </a>
+                </li>
+                <li className="rounded-sm" style={{ marginBottom: "1.25rem" }}>
+                  <a
+                    href="#"
+                    className="flex items-center p-2 space-x-3 rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-100"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                      />
+                    </svg>
+                    <span className="text-gray-100">Orders</span>
+                  </a>
+                </li>
+                <li className="rounded-sm" style={{ marginBottom: "1.25rem" }}>
+                  <a
+                    href="#"
+                    className="flex items-center p-2 space-x-3 rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-100"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    <span className="text-gray-100">Settings</span>
+                  </a>
+                </li>
+                <li className="rounded-sm" style={{ marginBottom: "1.25rem" }}>
+                  <a
+                    href="#"
+                    className="flex items-center p-2 space-x-3 rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-100"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span className="text-gray-100">Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-//         <Transition
-//           show={isOpen}
-//           enter="transition ease-out duration-200 transform"
-//           enterFrom="opacity-0 scale-95"
-//           enterTo="opacity-100 scale-100"
-//           leave="transition ease-in duration-200 transform"
-//           leaveFrom="opacity-100 scale-100"
-//           leaveTo="opacity-0 scale-95"
-//         >
-//           {(ref) => (
-//             <div className="md:hidden" id="mobile-menu">
-//               <div ref={ref} className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-//                 <div className="relative text-gray-600">
-//                   <input
-//                     name="search_min"
-//                     placeholder="Enter state"
-//                     className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none"
-//                     list="states_min"
-//                     onChange={(e) => {
-//                       setState(e.target.value);
-//                     }}
-//                   />
-//                   {/* <datalist id="states_min">
-//                     {states.map((state) => (
-//                       <option value={state} />
-//                     ))}
-//                   </datalist> */}
-//                   <button
-//                     className="absolute right-0 top-0 my-auto mr-4"
-//                     onClick={() => {
-//                       //   loadDashboardOrphanage(state);
-//                     }}
-//                   >
-//                     <GiMagnifyingGlass
-//                       style={{
-//                         width: "1.5rem",
-//                         height: "1.5rem",
-//                         color: "yellowgreen",
-//                       }}
-//                     />
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           )}
-//         </Transition>
-//       </nav>
-//       <div className="min-h-screen flex flex-row bg-gray-100">
-//         <div
-//           className="flex flex-col w-56 overflow-hidden ml-3"
-//           style={{ backgroundColor: "#1a1c23" }}
-//         >
-//           <ul className="flex flex-col py-4" style={{ marginTop: "5rem" }}>
-//             <li>
-//               {orphanages == 1 ? (
-//                 <button
-//                   className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                   style={{
-//                     height: "3rem",
-//                     width: "130px",
-//                     marginLeft: "2rem",
-//                     paddingLeft: "1rem",
-//                     backgroundColor: "yellowgreen",
-//                     borderRadius: "8px",
-//                   }}
-//                   onClick={() => {
-//                     showOrphanages();
-//                   }}
-//                 >
-//                   {" "}
-//                   <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                     Orphanages
-//                   </span>
-//                 </button>
-//               ) : (
-//                 <button
-//                   className="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                   style={{
-//                     height: "3rem",
-//                     width: "130px",
-//                     marginLeft: "2rem",
-//                     paddingLeft: "1rem",
-//                   }}
-//                   onClick={() => {
-//                     showOrphanages();
-//                   }}
-//                 >
-//                   {" "}
-//                   <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                     Orphanages
-//                   </span>
-//                 </button>
-//               )}
-//             </li>
-//             <li style={{ marginTop: "1rem" }}>
-//               {localStorage.getItem("LogInAs") === "user" ? (
-//                 profile == 1 ? (
-//                   <button
-//                     className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                     style={{
-//                       height: "3rem",
-//                       width: "130px",
-//                       marginLeft: "2rem",
-//                       paddingLeft: "1rem",
-//                       backgroundColor: "yellowgreen",
-//                       borderRadius: "8px",
-//                     }}
-//                     onClick={() => {
-//                       // setOrphanages(0);
-//                       // setProfile(1);
-//                       userProfile();
-//                     }}
-//                   >
-//                     <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                       Profile
-//                     </span>
-//                   </button>
-//                 ) : (
-//                   <button
-//                     className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                     style={{
-//                       height: "3rem",
-//                       width: "130px",
-//                       marginLeft: "2rem",
-//                       paddingLeft: "1rem",
-//                     }}
-//                     onClick={() => {
-//                       // setOrphanages(0);
-//                       // setProfile(1);
-//                       userProfile();
-//                     }}
-//                   >
-//                     <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                       Profile
-//                     </span>
-//                   </button>
-//                 )
-//               ) : orphanage_profile == 1 ? (
-//                 <button
-//                   className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                   style={{
-//                     height: "3rem",
-//                     width: "130px",
-//                     marginLeft: "2rem",
-//                     paddingLeft: "1rem",
-//                     backgroundColor: "yellowgreen",
-//                     borderRadius: "8px",
-//                   }}
-//                   onClick={() => {
-//                     // setOrphanages(0);
-//                     // setProfile(1);
-//                     orphanageProfile();
-//                   }}
-//                 >
-//                   <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                     Profile
-//                   </span>
-//                 </button>
-//               ) : (
-//                 <button
-//                   className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                   style={{
-//                     height: "3rem",
-//                     width: "130px",
-//                     marginLeft: "2rem",
-//                     paddingLeft: "1rem",
-//                   }}
-//                   onClick={() => {
-//                     // setOrphanages(0);
-//                     // setProfile(1);
-//                     orphanageProfile();
-//                   }}
-//                 >
-//                   <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                     Profile
-//                   </span>
-//                 </button>
-//               )}
-//             </li>
-//             <li style={{ marginTop: "1rem" }}>
-//               <Link to="/News" target="_blank">
-//                 <button
-//                   className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                   style={{
-//                     height: "3rem",
-//                     width: "130px",
-//                     marginLeft: "2rem",
-//                     paddingLeft: "1rem",
-//                   }}
-//                 >
-//                   <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                     News
-//                   </span>
-//                 </button>
-//               </Link>
-//             </li>
-//             <li style={{ marginTop: "1rem" }}>
-//               <button
-//                 className="flex flex-row items-center transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-100 hover:text-gray-800"
-//                 style={{
-//                   height: "3rem",
-//                   width: "130px",
-//                   marginLeft: "2rem",
-//                   paddingLeft: "1rem",
-//                 }}
-//                 onClick={() => {
-//                   // setOrphanages(0);
-//                   // setProfile(1);
-//                   Logout(navigate);
-//                 }}
-//               >
-//                 <span style={{ fontSize: "15px", letterSpacing: "2px" }}>
-//                   Log Out
-//                 </span>
-//               </button>
-//             </li>
-//           </ul>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
+      <div className="container">
+        <section class="text-gray-600 body-font">
+          <div class="container px-5 py-24 mx-auto">
+            <div class="flex flex-wrap -m-4">
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    Shooting Stars
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="6" cy="6" r="3"></circle>
+                      <circle cx="6" cy="18" r="3"></circle>
+                      <path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    The Catalyzer
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    Neptune
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    Melanchole
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    Bunker
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+              <div class="xl:w-1/3 md:w-1/2 p-4">
+                <div class="border border-gray-200 p-6 rounded-lg">
+                  <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      class="w-6 h-6"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                  </div>
+                  <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                    Ramona Falls
+                  </h2>
+                  <p class="leading-relaxed text-base">
+                    Fingerstache flexitarian street art 8-bit waist co, subway
+                    tile poke farm.
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* <button class="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+              Button
+            </button> */}
+          </div>
+        </section>
+      </div>
+    </div>
+
+    // <div className="flex">
+    //   <div
+    //     className={` ${
+    //       open ? "w-40" : "w-60 "
+    //     } flex flex-col h-screen p-3 bg-gray-800 shadow duration-300`}
+    //   >
+    //     <div className="space-y-3">
+    //       <div className="flex items-center justify-between">
+    //         <h2 className="text-xl font-bold text-white">Dashboard</h2>
+    //         <button onClick={() => setOpen(!open)}>
+    //           <svg
+    //             xmlns="http://www.w3.org/2000/svg"
+    //             className="w-6 h-6 text-white"
+    //             fill="none"
+    //             viewBox="0 0 24 24"
+    //             stroke="currentColor"
+    //             strokeWidth={2}
+    //           >
+    //             <path
+    //               strokeLinecap="round"
+    //               strokeLinejoin="round"
+    //               d="M4 6h16M4 12h8m-8 6h16"
+    //             />
+    //           </svg>
+    //         </button>
+    //       </div>
+    //       <div className="relative">
+    //         <span className="absolute inset-y-0 left-0 flex items-center py-4">
+    //           <button
+    //             type="submit"
+    //             className="p-2 focus:outline-none focus:ring"
+    //           >
+    //             <svg
+    //               xmlns="http://www.w3.org/2000/svg"
+    //               className="w-6 h-6"
+    //               fill="none"
+    //               viewBox="0 0 24 24"
+    //               stroke="currentColor"
+    //               strokeWidth={2}
+    //             >
+    //               <path
+    //                 strokeLinecap="round"
+    //                 strokeLinejoin="round"
+    //                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    //               />
+    //             </svg>
+    //           </button>
+    //         </span>
+    //         <input
+    //           type="search"
+    //           name="Search"
+    //           placeholder="Search..."
+    //           className="w-full py-2 pl-10 text-sm rounded-md focus:outline-none"
+    //         />
+    //       </div>
+    //       <div className="flex-1">
+    //         <ul className="pt-2 pb-4 space-y-1 text-sm">
+    //           <li className="rounded-sm">
+    //             <a
+    //               href="#"
+    //               className="flex items-center p-2 space-x-3 rounded-md"
+    //             >
+    //               <svg
+    //                 xmlns="http://www.w3.org/2000/svg"
+    //                 className="w-6 h-6 text-gray-100"
+    //                 fill="none"
+    //                 viewBox="0 0 24 24"
+    //                 stroke="currentColor"
+    //                 strokeWidth={2}
+    //               >
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+    //                 />
+    //               </svg>
+    //               <span className="text-gray-100">Home</span>
+    //             </a>
+    //           </li>
+    //           <li className="rounded-sm">
+    //             <a
+    //               href="#"
+    //               className="flex items-center p-2 space-x-3 rounded-md"
+    //             >
+    //               <svg
+    //                 xmlns="http://www.w3.org/2000/svg"
+    //                 className="w-6 h-6 text-gray-100"
+    //                 fill="none"
+    //                 viewBox="0 0 24 24"
+    //                 stroke="currentColor"
+    //                 strokeWidth={2}
+    //               >
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+    //                 />
+    //               </svg>
+    //               <span className="text-gray-100">Inbox</span>
+    //             </a>
+    //           </li>
+    //           <li className="rounded-sm">
+    //             <a
+    //               href="#"
+    //               className="flex items-center p-2 space-x-3 rounded-md"
+    //             >
+    //               <svg
+    //                 xmlns="http://www.w3.org/2000/svg"
+    //                 className="w-6 h-6 text-gray-100"
+    //                 fill="none"
+    //                 viewBox="0 0 24 24"
+    //                 stroke="currentColor"
+    //                 strokeWidth={2}
+    //               >
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+    //                 />
+    //               </svg>
+    //               <span className="text-gray-100">Orders</span>
+    //             </a>
+    //           </li>
+    //           <li className="rounded-sm">
+    //             <a
+    //               href="#"
+    //               className="flex items-center p-2 space-x-3 rounded-md"
+    //             >
+    //               <svg
+    //                 xmlns="http://www.w3.org/2000/svg"
+    //                 className="w-6 h-6 text-gray-100"
+    //                 fill="none"
+    //                 viewBox="0 0 24 24"
+    //                 stroke="currentColor"
+    //                 strokeWidth={2}
+    //               >
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+    //                 />
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+    //                 />
+    //               </svg>
+    //               <span className="text-gray-100">Settings</span>
+    //             </a>
+    //           </li>
+    //           <li className="rounded-sm">
+    //             <a
+    //               href="#"
+    //               className="flex items-center p-2 space-x-3 rounded-md"
+    //             >
+    //               <svg
+    //                 xmlns="http://www.w3.org/2000/svg"
+    //                 className="w-6 h-6 text-gray-100"
+    //                 fill="none"
+    //                 viewBox="0 0 24 24"
+    //                 stroke="currentColor"
+    //                 strokeWidth={2}
+    //               >
+    //                 <path
+    //                   strokeLinecap="round"
+    //                   strokeLinejoin="round"
+    //                   d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+    //                 />
+    //               </svg>
+    //               <span className="text-gray-100">Logout</span>
+    //             </a>
+    //           </li>
+    //         </ul>
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className="container mx-auto mt-12">
+    //     <div className="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
+    //       <div className="w-full px-4 py-5 bg-white rounded-lg shadow">
+    //         <div className="text-sm font-medium text-gray-500 truncate">
+    //           Total users
+    //         </div>
+    //         <div className="mt-1 text-3xl font-semibold text-gray-900">
+    //           12,00
+    //         </div>
+    //       </div>
+    //       <div className="w-full px-4 py-5 bg-white rounded-lg shadow">
+    //         <div className="text-sm font-medium text-gray-500 truncate">
+    //           Total Profit
+    //         </div>
+    //         <div className="mt-1 text-3xl font-semibold text-gray-900">
+    //           $ 450k
+    //         </div>
+    //       </div>
+    //       <div className="w-full px-4 py-5 bg-white rounded-lg shadow">
+    //         <div className="text-sm font-medium text-gray-500 truncate">
+    //           Total Orders
+    //         </div>
+    //         <div className="mt-1 text-3xl font-semibold text-gray-900">20k</div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+  );
+}
