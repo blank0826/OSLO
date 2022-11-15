@@ -10,6 +10,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { getDatabase, ref, set, onValue } from "firebase/database";
+import { BsWindowSidebar } from "react-icons/bs";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
@@ -299,9 +300,25 @@ function writeProfData(userId, name, email, contact, password) {
   });
 }
 
+//--------LOGOUT---------
+const LogoutStudent = (navigate) => {
+  if (auth.currentUser.uid != null) {
+    set(ref(db, "token/" + auth.currentUser.uid), {
+      token: null,
+    }).catch((error) => {
+      window.alert(error.message);
+    });
+  }
+  navigate("/LoginUser");
+  signOut(auth);
+  window.alert("Signed out!");
+  //localStorage.removeItem("Bearer");
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
   HandleLoginFirebaseProf,
   HandleSignupProf,
+  LogoutStudent,
 };
