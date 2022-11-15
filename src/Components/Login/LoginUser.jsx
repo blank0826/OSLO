@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { React, useState } from "react";
 // import { ProfDashboard } from "./Dashboard";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,16 +8,25 @@ require("typeface-abril-fatface");
 export default function LoginUser() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [isChecked, setChecked] = useState(false);
   const navigate = useNavigate();
 
   const handleUserLogin = (e) => {
     e.preventDefault();
     console.log(email + " " + password);
-    HandleLoginFirebaseUser(navigate, email, password);
+    HandleLoginFirebaseUser(navigate, email, password, isChecked);
     setEmail("");
     setPassword("");
   };
+
+  const handleChange = (e) => {
+    setChecked(e.target.checked);
+  };
+
+  useEffect(() => {
+    setEmail(localStorage.getItem("emailUser"));
+    setPassword(localStorage.getItem("passwordUser"));
+  }, []);
 
   return (
     <>
@@ -85,6 +95,7 @@ export default function LoginUser() {
                       name="remember_me"
                       type="checkbox"
                       className="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                      onChange={handleChange}
                     />
                     <label
                       for="remember_me"
@@ -95,10 +106,11 @@ export default function LoginUser() {
                   </div>
                   <div className="text-sm">
                     <a
-                      href="#"
+                      href="/ForgotPassword"
                       style={{
                         color: "#937DC2",
                       }}
+                      onClick={localStorage.setItem("FromFP", 2)}
                     >
                       Forgot your password?
                     </a>
