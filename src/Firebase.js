@@ -59,56 +59,67 @@ function validatePassword(password) {
   }
 }
 
-const HandleLoginFirebaseUser = (navigate, email, password) => {
+const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
   if (!validateField(email) || !validateField(password)) {
     window.alert("Please fill all the fields.");
   } else {
-    // const studentRef = ref(db, "student/");
-    // onValue(studentRef, (snapshot) => {
-    //   let data = snapshot.val();
+    const studentRef = ref(db, "students/");
+    onValue(studentRef, (snapshot) => {
+      let data = snapshot.val();
+      console.log(data);
+      if (data == null) {
+        alert("You have not registered!");
+        return;
+      }
 
-    //   if (data == null) {
-    //     alert("You have not registered!");
-    //     return;
-    //   }
+      var val = null;
 
-    //   let val = data.find((c) => c.email === email);
-    //   if (val == null) {
-    //     alert("You have not registered!");
-    //     return;
-    //   } else {
-    // if (val.email == email && val.password == password) {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        window.alert("Signed in!");
-        console.log(auth.currentUser.accessToken);
-        // if (!auth.currentUser.emailVerified) {
-        //   window.alert("Verify your email!");
-        // } else {
-        set(ref(db, "token/" + auth.currentUser.uid), {
-          token: auth.currentUser.accessToken,
-        }).catch((error) => {
-          window.alert(error.message);
-        });
+      for (var key in data) {
+        var obj = data[key];
+        if (obj.email == email) {
+          val = obj;
+          break;
+        }
+      }
 
-        // localStorage.setItem("Bearer", auth.currentUser.accessToken);
-        // localStorage.setItem("OrphanageId", id);
-        navigate("/DashboardUser");
-        // }
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        window.alert(errorMessage);
-      });
-    // } else {
-    //   //   if (val.id != id) {
-    //   //     alert("You have not registered!");
-    //   //   } else {
-    //   alert("Incorrect Email or Password");
-    //   //   }
-    // }
-    //   }
-    // });
+      if (val == null) {
+        alert("You have not registered!");
+        return;
+      } else {
+        // if (val.email == email && val.password == password) {
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            console.log(auth.currentUser.accessToken);
+            if (!auth.currentUser.emailVerified) {
+              window.alert("Verify your email!");
+            } else {
+              if (isChecked) {
+                console.log("checked");
+                localStorage.setItem("emailUser", email);
+                localStorage.setItem("passwordUser", password);
+              } else {
+                localStorage.removeItem("emailUser");
+                localStorage.removeItem("passwordUser");
+              }
+
+              set(ref(db, "token/" + auth.currentUser.uid), {
+                token: auth.currentUser.accessToken,
+              }).catch((error) => {
+                window.alert(error.message);
+              });
+
+              // localStorage.setItem("Bearer", auth.currentUser.accessToken);
+              // localStorage.setItem("OrphanageId", id);
+              window.alert("Signed in!");
+              navigate("/DashboardUser");
+            }
+          })
+          .catch((error) => {
+            const errorMessage = error.message;
+            window.alert(errorMessage);
+          });
+      }
+    });
   }
 };
 
@@ -139,11 +150,11 @@ const HandleSignupUser = (navigate, email, password, name, rollno, repeat) => {
         window.alert("User Created");
         const user = userCredential.user;
         writeUserData(user.uid, name, email, rollno);
-        // sendEmailVerification(user).then(() => {
-        //   // Email verification sent!
-        //   let msg = "An email verification link has been sent to " + user.email;
-        //   window.alert(msg);
-        // });
+        sendEmailVerification(user).then(() => {
+          // Email verification sent!
+          let msg = "An email verification link has been sent to " + user.email;
+          window.alert(msg);
+        });
 
         updateProfile(auth.currentUser, {
           displayName: name,
@@ -165,38 +176,66 @@ const HandleSignupUser = (navigate, email, password, name, rollno, repeat) => {
   }
 };
 
-const HandleLoginFirebaseProf = (navigate, email, password) => {
+const ForgotPasswordFirebase = async (navigate, email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset link sent!");
+    let valID = localStorage.getItem("FromFP");
+    if (valID == 1) {
+      navigate("/LoginProf");
+    } else if (valID == 2) {
+      navigate("/LoginUser");
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
+const HandleLoginFirebaseProf = (navigate, email, password, isChecked) => {
   if (!validateField(email) || !validateField(password)) {
     window.alert("Please fill all the fields.");
   } else {
     const profRef = ref(db, "professors/");
-    let array = [];
     onValue(profRef, (snapshot) => {
       let data = snapshot.val();
-      // console.log(typeof data);
-      // console.log(Object.keys(data).length);
 
       if (data == null) {
         alert("You have not registered!");
         return;
       }
 
-      array = Object.values(data);
-      console.log(array);
+      var val = null;
 
-      let val = array.find((c) => c.email == email);
+      for (var key in data) {
+        var obj = data[key];
+        if (obj.email == email) {
+          val = obj;
+          break;
+        }
+      }
+
       if (val == null) {
         alert("You have not registered!");
         return;
       } else {
-        if (val.email == email && val.password == password) {
-          signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+        if (isChecked) {
+          console.log("checked");
+          localStorage.setItem("emailProf", email);
+          localStorage.setItem("passwordProf", password);
+        } else {
+          localStorage.removeItem("emailProf");
+          localStorage.removeItem("passwordProf");
+        }
+
+        // if (val.email == email && val.password == password) {
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            console.log(auth.currentUser.accessToken);
+            if (!auth.currentUser.emailVerified) {
+              window.alert("Verify your email!");
+            } else {
               window.alert("Signed in!");
-              console.log(auth.currentUser.accessToken);
-              // if (!auth.currentUser.emailVerified) {
-              //   window.alert("Verify your email!");
-              // } else {
               set(ref(db, "token/" + auth.currentUser.uid), {
                 token: auth.currentUser.accessToken,
               }).catch((error) => {
@@ -206,19 +245,19 @@ const HandleLoginFirebaseProf = (navigate, email, password) => {
               // localStorage.setItem("Bearer", auth.currentUser.accessToken);
               // localStorage.setItem("OrphanageId", id);
               navigate("/DashboardProf");
-              // }
-            })
-            .catch((error) => {
-              const errorMessage = error.message;
-              window.alert(errorMessage);
-            });
-        } else {
-          // if (val.id != id) {
-          //   alert("You have not registered!");
-          // } else {
-          alert("Incorrect Email or Password");
-          //   }
-        }
+            }
+          })
+          .catch((error) => {
+            const errorMessage = error.message;
+            window.alert(errorMessage);
+          });
+        // } else {
+        // if (val.id != id) {
+        //   alert("You have not registered!");
+        // } else {
+        // alert("Incorrect Email or Password");
+        //   }
+        // }
       }
     });
   }
@@ -251,11 +290,11 @@ const HandleSignupProf = (navigate, email, password, name, contact, repeat) => {
         window.alert("User Created");
         const user = userCredential.user;
         writeProfData(user.uid, name, email, contact, password);
-        // sendEmailVerification(user).then(() => {
-        //   // Email verification sent!
-        //   let msg = "An email verification link has been sent to " + user.email;
-        //   window.alert(msg);
-        // });
+        sendEmailVerification(user).then(() => {
+          // Email verification sent!
+          let msg = "An email verification link has been sent to " + user.email;
+          window.alert(msg);
+        });
 
         updateProfile(auth.currentUser, {
           displayName: name,
@@ -321,4 +360,5 @@ export {
   HandleLoginFirebaseProf,
   HandleSignupProf,
   LogoutStudent,
+  ForgotPasswordFirebase,
 };

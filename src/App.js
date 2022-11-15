@@ -6,6 +6,7 @@ import SigninProf from "./Components/Signin/SigninProf";
 import LoginProf from "./Components/Login/LoginProf";
 import ProfDashboard from "./Components/Dashboard/ProfDashboard";
 import SelectUser from "./Components/SelectUser/SelectUser";
+import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 
@@ -24,6 +25,11 @@ function App() {
           ></Route>
           <Route exact path="/SigninProf" element={<SigninProf />}></Route>
           <Route exact path="/LoginProf" element={<LoginProf />}></Route>
+          <Route
+            exact
+            path="/ForgotPassword"
+            element={<ForgotPassword />}
+          ></Route>
           <Route
             exact
             path="/DashboardProf"
