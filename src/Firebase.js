@@ -10,6 +10,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { getDatabase, ref, set, onValue } from "firebase/database";
+import { useEffect } from "react";
 import { BsWindowSidebar } from "react-icons/bs";
 
 const firebaseConfig = {
