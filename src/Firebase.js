@@ -355,6 +355,18 @@ const LogoutStudent = (navigate) => {
   //localStorage.removeItem("Bearer");
 };
 
+const accessUser = () => {
+  var uid = auth.currentUser["uid"];
+  console.log(uid);
+  let array = [];
+  var userRef = ref(db, "students/" + uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    array = data["courses"].split(", ");
+  });
+  return array;
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -362,4 +374,5 @@ export {
   HandleSignupProf,
   LogoutStudent,
   ForgotPasswordFirebase,
+  accessUser,
 };
