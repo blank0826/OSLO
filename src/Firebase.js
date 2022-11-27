@@ -372,6 +372,18 @@ function updateCourse(location) {
   console.log(location);
 }
 
+const accessUser = () => {
+  var uid = auth.currentUser["uid"];
+  console.log(uid);
+  let array = [];
+  var userRef = ref(db, "students/" + uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    array = data["courses"].split(", ");
+  });
+  return array;
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -381,4 +393,5 @@ export {
   ForgotPasswordFirebase,
   fetchCourses,
   updateCourse,
+  accessUser,
 };

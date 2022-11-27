@@ -4,16 +4,45 @@ import { React } from "react";
 import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { FcFolder } from "react-icons/fc";
 import { FiLogOut } from "react-icons/fi";
+import { FaHashtag } from "react-icons/fa";
+import { IoBookSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { LogoutStudent, fetchCourses, updateCourse } from "../../Firebase";
+
+import {
+  LogoutStudent,
+  fetchCourses,
+  updateCourse,
+  accessUser,
+} from "../../Firebase";
 
 import logo from "../../images/logo.png";
+
+import Select from "react-select";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
   const [location, setLocation] = useState("gs://e-lib-ab261.appspot.com");
   const [state, setState] = useState(1);
   const [open, setOpen] = useState(false);
+  const [tags, setTag] = useState([]);
+
+  const handleChange = (selectedOptions) => {
+    setTag({ selectedOptions });
+    console.log(tags);
+  };
+
+  const ColourOption = [
+    { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
+    { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
+    { value: "purple", label: "Purple", color: "#5243AA" },
+    { value: "red", label: "Red", color: "#FF5630", isFixed: true },
+    { value: "orange", label: "Orange", color: "#FF8B00" },
+    { value: "yellow", label: "Yellow", color: "#FFC400" },
+    { value: "green", label: "Green", color: "#36B37E" },
+    { value: "forest", label: "Forest", color: "#00875A" },
+    { value: "slate", label: "Slate", color: "#253858" },
+    { value: "silver", label: "Silver", color: "#666666" },
+  ];
 
   const navigate = useNavigate();
 
@@ -35,16 +64,35 @@ export default function UserDashboard() {
     updateCourse(location + "/" + courseKey);
   };
 
+  function getNames(enrolledCourses) {
+    let newArr = [];
+    console.log(courses);
+    courses.map((course) => {
+      if (enrolledCourses.includes(course.key)) {
+        const childData = course.data;
+        const childKey = course.key;
+        newArr.push({ key: childKey, data: childData });
+      }
+    });
+    setTimeout(setCourses(newArr), 3000);
+  }
+
+  const enrolledCourses = async () => {
+    var arr = await accessUser();
+    console.log(arr);
+    setTimeout(getNames(arr), 5000);
+  };
+
   return (
     <>
-      <header class="py-6 bg-gray-700 text-white text-center flex justify-end">
+      <header class="py-6 bg-gray-700 text-white text-center flex justify-between">
         <img
           src={logo}
-          className="mr-auto my-auto"
-          style={{ width: "15rem", height: "8rem" }}
+          className="ml-6"
+          style={{ width: "3rem", height: "4rem" }}
         />
         <FiLogOut
-          className="mr-3 cursor-pointer"
+          className="mr-3 cursor-pointer mt-4"
           style={{ width: "2rem", height: "2rem" }}
           onClick={handleStudentSignOut}
         />
@@ -118,52 +166,33 @@ export default function UserDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
+                    onClick={enrolledCourses}
                   >
                     <a
                       href="#"
                       className="flex items-center p-2 space-x-3 rounded-md"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 text-gray-100"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                        />
-                      </svg>
-                      <span className="text-gray-100">Home</span>
+                      <IoBookSharp className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-2" />
+                      <span className="text-gray-100 tracking-wider">
+                        Enrolled In
+                      </span>
                     </a>
                   </li>
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 text-gray-100"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                        />
-                      </svg>
-                      <span className="text-gray-100">Inbox</span>
-                    </a>
+                    <div className="flex items-center p-2 space-x-3 rounded-md">
+                      <FaHashtag className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-2" />
+                      <Select
+                        isMulti
+                        name="colors"
+                        options={ColourOption}
+                        className="basic-multi-select "
+                        classNamePrefix="select"
+                        onChange={handleChange}
+                      />
+                    </div>
                   </li>
                   <li
                     className="rounded-sm"
