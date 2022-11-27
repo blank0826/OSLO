@@ -11,13 +11,16 @@ import { useNavigate } from "react-router-dom";
 import { VscFilePdf } from "react-icons/vsc";
 import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
 import { MdOndemandVideo } from "react-icons/md";
+import { TiArrowLeftThick } from "react-icons/ti";
 import {
   LogoutStudent,
   fetchCourses,
   accessUser,
   getURL,
   uploadQuery,
+  fetchTags,
 } from "../../Firebase";
+
 import logo from "../../images/logo.png";
 import Select from "react-select";
 import Button from "@mui/material/Button";
@@ -33,6 +36,7 @@ export default function UserDashboard() {
   const [allCourses, setAllCourses] = useState([]);
   const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
+  const [allTags, setAllTags] = useState([]);
   const [tags, setTag] = useState([]);
   const [enrolled, setEnrolled] = useState(false);
   const [enrollCourses, setEnrollCourses] = useState([]);
@@ -40,10 +44,12 @@ export default function UserDashboard() {
   const [queryVisibility, setQueryVisibility] = useState(false);
   const [openQueryDialog, setQueryDialog] = useState(false);
   const [query, setQuery] = useState("");
+  const [backDisplay, setBackDisplay] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    componentDidUpdate();
     if (courses.length == 0) {
       let val = [];
       let arr = fetchCourses();
@@ -60,7 +66,21 @@ export default function UserDashboard() {
         setEnrollCourses(val);
       }
     }
+
+    if (allTags.length == 0) {
+      let val = [];
+      let arr = fetchTags();
+      val = val.concat(arr);
+      setAllTags(val);
+    }
   }, [courses, enrollCourses]);
+
+  function componentDidUpdate() {
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", function (event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }
 
   const handleClickOpen = () => {
     setQueryDialog(true);
@@ -80,18 +100,20 @@ export default function UserDashboard() {
     getURL(location, name);
   };
 
-  const ColourOption = [
-    { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
-    { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
-    { value: "purple", label: "Purple", color: "#5243AA" },
-    { value: "red", label: "Red", color: "#FF5630", isFixed: true },
-    { value: "orange", label: "Orange", color: "#FF8B00" },
-    { value: "yellow", label: "Yellow", color: "#FFC400" },
-    { value: "green", label: "Green", color: "#36B37E" },
-    { value: "forest", label: "Forest", color: "#00875A" },
-    { value: "slate", label: "Slate", color: "#253858" },
-    { value: "silver", label: "Silver", color: "#666666" },
-  ];
+  // const ColourOption = [
+  //   { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
+  //   { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
+  //   { value: "purple", label: "Purple", color: "#5243AA" },
+  //   { value: "red", label: "Red", color: "#FF5630", isFixed: true },
+  //   { value: "orange", label: "Orange", color: "#FF8B00" },
+  //   { value: "yellow", label: "Yellow", color: "#FFC400" },
+  //   { value: "green", label: "Green", color: "#36B37E" },
+  //   { value: "forest", label: "Forest", color: "#00875A" },
+  //   { value: "slate", label: "Slate", color: "#253858" },
+  //   { value: "silver", label: "Silver", color: "#666666" },
+  // ];
+
+  let tagOptions = [];
 
   const handleStudentSignOut = () => {
     LogoutStudent(navigate);
@@ -100,6 +122,7 @@ export default function UserDashboard() {
   const openCCourse = (courseKey) => {
     checkEnrolled(courseKey);
     setQueryVisibility(true);
+    setBackDisplay(true);
     setLocation(location + "" + courseKey);
     // updateCourse(location + "/" + courseKey);
     console.log(courseKey);
@@ -118,6 +141,7 @@ export default function UserDashboard() {
         return;
       }
     }
+
     setEnrolled(false);
     return;
   };
@@ -155,9 +179,7 @@ export default function UserDashboard() {
     setCourses(newArr);
   }
 
-  const enrolledCourses = async () => {
-    // var arr = await accessUser();
-    // console.log(arr);
+  const enrolledCourses = () => {
     getNames(enrollCourses);
   };
 
@@ -204,6 +226,27 @@ export default function UserDashboard() {
     uploadQuery(locationCourse, queryContent);
 
     //add query
+  };
+
+  const goBack = () => {
+    let locationCourse = location;
+    var index = location.indexOf("/");
+
+    if (index == -1) {
+      console.log("2");
+      setCourses(allCourses);
+      setBackDisplay(false);
+      setQueryVisibility(false);
+      setLocation("");
+    } else {
+      locationCourse = locationCourse.substring(0, index);
+      setLocation(locationCourse);
+      for (var i = 0; i < allCourses.length; i++) {
+        if (allCourses[i].key == locationCourse) {
+          setCourses(allCourses[i].data.content);
+        }
+      }
+    }
   };
 
   return (
@@ -328,6 +371,8 @@ export default function UserDashboard() {
                     style={{ marginBottom: "1.25rem" }}
                     onClick={() => {
                       setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
                       setCourses(fetchCourses);
                     }}
                   >
@@ -344,7 +389,12 @@ export default function UserDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={enrolledCourses}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      enrolledCourses();
+                    }}
                   >
                     <a
                       href="#"
@@ -365,7 +415,7 @@ export default function UserDashboard() {
                       <Select
                         isMulti
                         name="colors"
-                        options={ColourOption}
+                        options={allTags}
                         className="basic-multi-select "
                         classNamePrefix="select"
                         onChange={handleChange}
@@ -459,6 +509,14 @@ export default function UserDashboard() {
         </div>
         <div className="container">
           <section class="text-gray-600 body-font">
+            <TiArrowLeftThick
+              onClick={goBack}
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: backDisplay ? "block" : "none",
+              }}
+            ></TiArrowLeftThick>
             <div class="container px-5 py-24 mx-auto">
               <div class="flex flex-wrap -m-4">
                 {/* {console.log("2 " + allCourses.length)} */}

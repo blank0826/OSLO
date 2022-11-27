@@ -379,6 +379,25 @@ const getURL = (location, name) => {
     });
 };
 
+function fetchTags() {
+  let arr = [];
+  let checkTag = [];
+  const snapshot = onValue(ref(db, "courses/"), (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const childData = childSnapshot.val();
+      if (!checkTag.includes(childData["tag"])) {
+        arr.push({
+          value: childData["tag"],
+          label: childData["tag"],
+          isFixed: true,
+        });
+        checkTag.push(childData["tag"]);
+      }
+    });
+  });
+  return arr;
+}
+
 const accessUser = () => {
   var uid = auth.currentUser["uid"];
   let array = [];
@@ -412,6 +431,7 @@ export {
   LogoutStudent,
   ForgotPasswordFirebase,
   fetchCourses,
+  fetchTags,
   accessUser,
   getURL,
   uploadQuery,
