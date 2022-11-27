@@ -21,6 +21,7 @@ import Select from "react-select";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
   const [location, setLocation] = useState("gs://e-lib-ab261.appspot.com");
   const [state, setState] = useState(1);
   const [open, setOpen] = useState(false);
@@ -56,6 +57,7 @@ export default function UserDashboard() {
       let arr = fetchCourses();
       val = val.concat(arr);
       setCourses(val);
+      setAllCourses(val);
     }
   }, [courses]);
 
@@ -283,7 +285,8 @@ export default function UserDashboard() {
           <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
               <div class="flex flex-wrap -m-4">
-                {/* {console.log("2 " + courses.length)} */}
+                {/* {console.log("2 " + allCourses.length)}
+                {console.log(allCourses)} */}
                 {courses.length != 0 ? (
                   courses.map((course) => (
                     <div class="xl:w-1/5 md:w-1/3 p-4">
