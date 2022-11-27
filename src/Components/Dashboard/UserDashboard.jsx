@@ -5,32 +5,14 @@ import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { FcFolder } from "react-icons/fc";
 import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { LogoutStudent } from "../../Firebase";
+import { LogoutStudent, fetchCourses, updateCourse } from "../../Firebase";
 
 import logo from "../../images/logo.png";
 
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, onValue, child } from "firebase/database";
-import { getAuth } from "firebase/auth";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
-  authDomain: "e-lib-ab261.firebaseapp.com",
-  projectId: "e-lib-ab261",
-  storageBucket: "e-lib-ab261.appspot.com",
-  messagingSenderId: "896474287319",
-  appId: "1:896474287319:web:0f9d093ad440900320f492",
-  measurementId: "G-7HW0L0S1HJ",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getDatabase(app);
-
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
-
+  const [location, setLocation] = useState("gs://e-lib-ab261.appspot.com");
+  const [state, setState] = useState(1);
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -40,19 +22,17 @@ export default function UserDashboard() {
   };
 
   useEffect(() => {
-    fetchCourses();
-  }, [open]);
+    if (courses.length == 0) {
+      let val = [];
+      let arr = fetchCourses();
+      val = val.concat(arr);
+      setCourses(val);
+    }
+  }, [courses]);
 
-  const fetchCourses = async () => {
-    let arr = [];
-    const snapshot = await onValue(ref(db, "courses/"), (snapshot) => {
-      snapshot.forEach((childSnapshot) => {
-        const childData = childSnapshot.val();
-        const childKey = childSnapshot.key;
-        arr.push({ key: childKey, data: childData });
-      });
-    });
-    setCourses(arr);
+  const openCCourse = (courseKey) => {
+    setLocation(location + "/" + courseKey);
+    updateCourse(location + "/" + courseKey);
   };
 
   return (
@@ -274,10 +254,15 @@ export default function UserDashboard() {
           <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
               <div class="flex flex-wrap -m-4">
+                {/* {console.log("2 " + courses.length)} */}
                 {courses.length != 0 ? (
                   courses.map((course) => (
                     <div class="xl:w-1/5 md:w-1/3 p-4">
-                      <div class="p-6 rounded-lg">
+                      {/* {console.log(courses[0])} */}
+                      <div
+                        class="p-6 rounded-lg"
+                        onClick={() => openCCourse(course.key)}
+                      >
                         <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
                           <FcFolder style={{ width: "5rem", height: "5rem" }} />
                         </div>
@@ -291,7 +276,10 @@ export default function UserDashboard() {
                     </div>
                   ))
                 ) : (
-                  <h1>Fetching...</h1>
+                  <h1>
+                    {/* {console.log("22222")} */}
+                    Fetching..................................................
+                  </h1>
                 )}
               </div>
             </div>

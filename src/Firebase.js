@@ -355,6 +355,23 @@ const LogoutStudent = (navigate) => {
   //localStorage.removeItem("Bearer");
 };
 
+function fetchCourses() {
+  let arr = [];
+  const snapshot = onValue(ref(db, "courses/"), (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const childData = childSnapshot.val();
+      const childKey = childSnapshot.key;
+      arr.push({ key: childKey, data: childData });
+    });
+  });
+  // console.log(arr);
+  return arr;
+}
+
+function updateCourse(location) {
+  console.log(location);
+}
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -362,4 +379,6 @@ export {
   HandleSignupProf,
   LogoutStudent,
   ForgotPasswordFirebase,
+  fetchCourses,
+  updateCourse,
 };
