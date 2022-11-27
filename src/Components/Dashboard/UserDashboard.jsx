@@ -6,6 +6,7 @@ import { FcFolder } from "react-icons/fc";
 import { FiLogOut } from "react-icons/fi";
 import { FaHashtag } from "react-icons/fa";
 import { IoBookSharp } from "react-icons/io5";
+import { BsPencilSquare } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -166,13 +167,28 @@ export default function UserDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={enrolledCourses}
+                    onClick={() => setCourses(fetchCourses)}
                   >
                     <a
                       href="#"
                       className="flex items-center p-2 space-x-3 rounded-md"
                     >
                       <IoBookSharp className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-2" />
+                      <span className="text-gray-100 tracking-wider">
+                        All Courses
+                      </span>
+                    </a>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={enrolledCourses}
+                  >
+                    <a
+                      href="#"
+                      className="flex items-center p-2 space-x-3 rounded-md"
+                    >
+                      <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-1" />
                       <span className="text-gray-100 tracking-wider">
                         Enrolled In
                       </span>
@@ -183,7 +199,7 @@ export default function UserDashboard() {
                     style={{ marginBottom: "1.25rem" }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">
-                      <FaHashtag className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-2" />
+                      <FaHashtag className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-" />
                       <Select
                         isMulti
                         name="colors"
