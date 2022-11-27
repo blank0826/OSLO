@@ -368,6 +368,25 @@ function fetchCourses() {
   return arr;
 }
 
+function fetchTags() {
+  let arr = [];
+  let checkTag = [];
+  const snapshot = onValue(ref(db, "courses/"), (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const childData = childSnapshot.val();
+      if (!checkTag.includes(childData["tag"])) {
+        arr.push({
+          value: childData["tag"],
+          label: childData["tag"],
+          isFixed: true,
+        });
+        checkTag.push(childData["tag"]);
+      }
+    });
+  });
+  return arr;
+}
+
 function updateCourse(location) {
   console.log(location);
 }
@@ -392,6 +411,7 @@ export {
   LogoutStudent,
   ForgotPasswordFirebase,
   fetchCourses,
+  fetchTags,
   updateCourse,
   accessUser,
 };

@@ -14,6 +14,7 @@ import {
   fetchCourses,
   updateCourse,
   accessUser,
+  fetchTags,
 } from "../../Firebase";
 
 import logo from "../../images/logo.png";
@@ -26,6 +27,7 @@ export default function UserDashboard() {
   const [location, setLocation] = useState("gs://e-lib-ab261.appspot.com");
   const [state, setState] = useState(1);
   const [open, setOpen] = useState(false);
+  const [allTags, setAllTags] = useState([]);
   const [tags, setTag] = useState([]);
 
   const handleChange = (selectedOptions) => {
@@ -33,18 +35,7 @@ export default function UserDashboard() {
     console.log(tags);
   };
 
-  const ColourOption = [
-    { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
-    { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
-    { value: "purple", label: "Purple", color: "#5243AA" },
-    { value: "red", label: "Red", color: "#FF5630", isFixed: true },
-    { value: "orange", label: "Orange", color: "#FF8B00" },
-    { value: "yellow", label: "Yellow", color: "#FFC400" },
-    { value: "green", label: "Green", color: "#36B37E" },
-    { value: "forest", label: "Forest", color: "#00875A" },
-    { value: "slate", label: "Slate", color: "#253858" },
-    { value: "silver", label: "Silver", color: "#666666" },
-  ];
+  let tagOptions = [];
 
   const navigate = useNavigate();
 
@@ -60,6 +51,26 @@ export default function UserDashboard() {
       setCourses(val);
       setAllCourses(val);
     }
+    if (allTags.length == 0) {
+      let val = [];
+      let arr = fetchTags();
+      val = val.concat(arr);
+      setAllTags(arr);
+    }
+    // if (allCourses.length != 0 && allTags.length == 0) {
+    //   let arr = [];
+    //   allCourses.map((course) => {
+    //     arr = arr.concat(course.data["tag"]);
+    //   });
+    //   setAllTags(arr);
+    // }
+    // if (allTags.length != 0 && tagOptions.length == 0) {
+    //   let arr = [];
+    //   allTags.map((tag) => {
+    //     arr.push({ value: tag, label: tag, isFixed: true });
+    //   });
+    //   tagOptions.concat(arr);
+    // }
   }, [courses]);
 
   const openCCourse = (courseKey) => {
@@ -205,7 +216,7 @@ export default function UserDashboard() {
                       <Select
                         isMulti
                         name="colors"
-                        options={ColourOption}
+                        options={allTags}
                         className="basic-multi-select "
                         classNamePrefix="select"
                         onChange={handleChange}
