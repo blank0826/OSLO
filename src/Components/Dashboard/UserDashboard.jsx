@@ -285,8 +285,8 @@ export default function UserDashboard() {
           <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
               <div class="flex flex-wrap -m-4">
-                {/* {console.log("2 " + allCourses.length)}
-                {console.log(allCourses)} */}
+                {/* {console.log("2 " + allCourses.length)} */}
+                {console.log(allCourses)}
                 {courses.length != 0 ? (
                   courses.map((course) => (
                     <div class="xl:w-1/5 md:w-1/3 p-4">
