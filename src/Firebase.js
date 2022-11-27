@@ -4,14 +4,12 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  onAuthStateChanged,
   signOut,
   updateProfile,
   sendEmailVerification,
 } from "firebase/auth";
 import { getDatabase, ref, set, onValue } from "firebase/database";
-import { useEffect } from "react";
-import { BsWindowSidebar } from "react-icons/bs";
+import { getStorage, ref as sRef, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
@@ -27,6 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getDatabase(app);
+const storage = getStorage();
 
 function validateField(field) {
   if (field == null) {
@@ -368,13 +367,20 @@ function fetchCourses() {
   return arr;
 }
 
-function updateCourse(location) {
-  console.log(location);
-}
+const getURL = (location, name) => {
+  console.log(name);
+  const pathReference = sRef(storage, location + "/" + name);
+  getDownloadURL(pathReference)
+    .then((url) => {
+      window.open(url, "_blank", "noopener,noreferrer");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 const accessUser = () => {
   var uid = auth.currentUser["uid"];
-  console.log(uid);
   let array = [];
   var userRef = ref(db, "students/" + uid);
   onValue(userRef, (snapshot) => {
@@ -382,6 +388,20 @@ const accessUser = () => {
     array = data["courses"].split(", ");
   });
   return array;
+};
+
+const uploadQuery = (locationCourse, queryContent) => {
+  const pathRef = ref(db, "courses/" + locationCourse + "/query");
+  let index = 0;
+
+  onValue(pathRef, (snapshot) => {
+    index = snapshot.val().length;
+    console.log(index);
+  });
+
+  set(ref(db, "courses/" + locationCourse + "/query/" + index), {
+    content: queryContent,
+  });
 };
 
 export {
@@ -392,6 +412,7 @@ export {
   LogoutStudent,
   ForgotPasswordFirebase,
   fetchCourses,
-  updateCourse,
   accessUser,
+  getURL,
+  uploadQuery,
 };

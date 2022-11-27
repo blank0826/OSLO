@@ -8,29 +8,76 @@ import { FaHashtag } from "react-icons/fa";
 import { IoBookSharp } from "react-icons/io5";
 import { BsPencilSquare } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-
+import { VscFilePdf } from "react-icons/vsc";
+import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
+import { MdOndemandVideo } from "react-icons/md";
 import {
   LogoutStudent,
   fetchCourses,
-  updateCourse,
   accessUser,
+  getURL,
+  uploadQuery,
 } from "../../Firebase";
-
 import logo from "../../images/logo.png";
-
 import Select from "react-select";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
-  const [location, setLocation] = useState("gs://e-lib-ab261.appspot.com");
-  const [state, setState] = useState(1);
+  const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
   const [tags, setTag] = useState([]);
+  const [enrolled, setEnrolled] = useState(false);
+  const [enrollCourses, setEnrollCourses] = useState([]);
+  const [courseSearch, setCourseSearch] = useState("");
+  const [queryVisibility, setQueryVisibility] = useState(false);
+  const [openQueryDialog, setQueryDialog] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (courses.length == 0) {
+      let val = [];
+      let arr = fetchCourses();
+      val = val.concat(arr);
+      setCourses(val);
+      setAllCourses(val);
+    } else {
+      if (enrollCourses.length == 0) {
+        let val = [];
+        let arr = accessUser();
+        val = val.concat(arr);
+        console.log("eee");
+        console.log(val);
+        setEnrollCourses(val);
+      }
+    }
+  }, [courses, enrollCourses]);
+
+  const handleClickOpen = () => {
+    setQueryDialog(true);
+  };
+
+  const handleClose = () => {
+    setQueryDialog(false);
+    setQuery("");
+  };
 
   const handleChange = (selectedOptions) => {
     setTag({ selectedOptions });
     console.log(tags);
+  };
+
+  const getDownloadURL = async (name) => {
+    getURL(location, name);
   };
 
   const ColourOption = [
@@ -46,30 +93,57 @@ export default function UserDashboard() {
     { value: "silver", label: "Silver", color: "#666666" },
   ];
 
-  const navigate = useNavigate();
-
   const handleStudentSignOut = () => {
     LogoutStudent(navigate);
   };
 
-  useEffect(() => {
-    if (courses.length == 0) {
-      let val = [];
-      let arr = fetchCourses();
-      val = val.concat(arr);
-      setCourses(val);
-      setAllCourses(val);
-    }
-  }, [courses]);
-
   const openCCourse = (courseKey) => {
-    setLocation(location + "/" + courseKey);
-    updateCourse(location + "/" + courseKey);
+    checkEnrolled(courseKey);
+    setQueryVisibility(true);
+    setLocation(location + "" + courseKey);
+    // updateCourse(location + "/" + courseKey);
+    console.log(courseKey);
+    let val = courses;
+    let arr = val.filter((c) => c.key == courseKey);
+    arr = arr[0].data.content;
+    setCourses(arr);
+  };
+
+  const checkEnrolled = (courseKey) => {
+    console.log(enrollCourses);
+    console.log(courseKey);
+    for (let i = 0; i < enrollCourses.length; i++) {
+      if (enrollCourses[i] == courseKey) {
+        setEnrolled(true);
+        return;
+      }
+    }
+    setEnrolled(false);
+    return;
+  };
+
+  const openFCourse = (index) => {
+    console.log(enrolled);
+    console.log(index);
+    if (index > 0 && !enrolled) {
+      window.alert(
+        "You are not enrolled in the course. First enroll to access the modules."
+      );
+      return;
+    }
+
+    setLocation(location + "/" + index);
+    console.log(index);
+    let val = courses;
+    let arr = val[index];
+    console.log(arr);
+    setCourses(arr);
   };
 
   function getNames(enrolledCourses) {
     let newArr = [];
     console.log(courses);
+    console.log(enrollCourses);
     courses.map((course) => {
       if (enrolledCourses.includes(course.key)) {
         const childData = course.data;
@@ -77,13 +151,59 @@ export default function UserDashboard() {
         newArr.push({ key: childKey, data: childData });
       }
     });
-    setTimeout(setCourses(newArr), 3000);
+
+    setCourses(newArr);
   }
 
   const enrolledCourses = async () => {
-    var arr = await accessUser();
-    console.log(arr);
-    setTimeout(getNames(arr), 5000);
+    // var arr = await accessUser();
+    // console.log(arr);
+    getNames(enrollCourses);
+  };
+
+  const searchCourses = () => {
+    if (courseSearch == "") {
+      return;
+    }
+
+    let arr = [];
+
+    let checkCode = courseSearch.toUpperCase();
+
+    console.log(checkCode);
+
+    for (var i = 0; i < allCourses.length; i++) {
+      if (allCourses[i].key == checkCode) {
+        const childData = allCourses[i].data;
+        const childKey = allCourses[i].key;
+        arr.push({ key: childKey, data: childData });
+      }
+    }
+
+    if (arr.length == 0) {
+      window.alert(
+        "The mentioned course doesn't exist. Kindly check the course code and try again!"
+      );
+    } else {
+      setCourses(arr);
+    }
+    setCourseSearch("");
+  };
+
+  const submitQuery = () => {
+    setQueryDialog(false);
+    setQuery("");
+    let queryContent = query;
+    let locationCourse = location;
+    var index = locationCourse.indexOf("/");
+
+    if (index != -1) {
+      locationCourse = locationCourse.substring(0, index);
+    }
+    console.log(locationCourse);
+    uploadQuery(locationCourse, queryContent);
+
+    //add query
   };
 
   return (
@@ -94,6 +214,40 @@ export default function UserDashboard() {
           className="ml-6"
           style={{ width: "3rem", height: "4rem" }}
         />
+        <Button
+          style={{
+            display: queryVisibility ? "block" : "none",
+            color: "#937DC2",
+          }}
+          variant="outlined"
+          onClick={handleClickOpen}
+        >
+          Raise Query
+        </Button>
+        <Dialog open={openQueryDialog} onClose={handleClose}>
+          <DialogTitle>Raise a Query</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Your queries will be directly viewed by the professors of the
+              respective course.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Query"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Close</Button>
+            <Button onClick={submitQuery}>Submit</Button>
+          </DialogActions>
+        </Dialog>
         <FiLogOut
           className="mr-3 cursor-pointer mt-4"
           style={{ width: "2rem", height: "2rem" }}
@@ -136,10 +290,19 @@ export default function UserDashboard() {
                 </button>
               </div>
               <div className="relative">
+                <input
+                  type="search"
+                  name="Search"
+                  placeholder="Eg: CSD304, CSD311"
+                  className="w-full py-2 pl-10 text-sm rounded-md focus:outline-none"
+                  onChange={(e) => setCourseSearch(e.target.value)}
+                  value={courseSearch}
+                />
                 <span className="absolute inset-y-0 left-0 flex items-center py-4">
                   <button
                     type="submit"
                     className="p-2 focus:outline-none focus:ring"
+                    onClick={searchCourses}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -157,19 +320,16 @@ export default function UserDashboard() {
                     </svg>
                   </button>
                 </span>
-                <input
-                  type="search"
-                  name="Search"
-                  placeholder="Search..."
-                  className="w-full py-2 pl-10 text-sm rounded-md focus:outline-none"
-                />
               </div>
               <div className="flex-1">
                 <ul className="pt-2 pb-4 space-y-1 text-sm">
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={() => setCourses(fetchCourses)}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setCourses(fetchCourses);
+                    }}
                   >
                     <a
                       href="#"
@@ -302,32 +462,100 @@ export default function UserDashboard() {
             <div class="container px-5 py-24 mx-auto">
               <div class="flex flex-wrap -m-4">
                 {/* {console.log("2 " + allCourses.length)} */}
-                {console.log(allCourses)}
+                {/* {console.log(allCourses)} */}
                 {courses.length != 0 ? (
-                  courses.map((course) => (
-                    <div class="xl:w-1/5 md:w-1/3 p-4">
-                      {/* {console.log(courses[0])} */}
-                      <div
-                        class="p-6 rounded-lg"
-                        onClick={() => openCCourse(course.key)}
-                      >
-                        <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                          <FcFolder style={{ width: "5rem", height: "5rem" }} />
-                        </div>
-                        <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
-                          {course.key}
-                        </h2>
-                        <p class="leading-relaxed text-base">
+                  courses[0].key == undefined ? (
+                    courses[0].format == undefined ? (
+                      courses.map((course, i) => (
+                        <div class="xl:w-1/5 md:w-1/3 p-4">
+                          {/* {console.log(courses[0])} */}
+                          <div
+                            class="p-6 rounded-lg"
+                            onClick={() => openFCourse(i)}
+                          >
+                            <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
+                              <FcFolder
+                                style={{ width: "5rem", height: "5rem" }}
+                              />
+                            </div>
+                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                              Module {i}
+                            </h2>
+                            {/* <p class="leading-relaxed text-base">
                           {course.data["name"]}
-                        </p>
+                        </p> */}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      courses.map((course) => (
+                        <div class="xl:w-1/5 md:w-1/3 p-4">
+                          <div
+                            class="p-6 rounded-lg cursor-pointer"
+                            onClick={() => getDownloadURL(course.url)}
+                          >
+                            <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
+                              {course.format == "pdf" ? (
+                                <VscFilePdf
+                                  style={{
+                                    width: "5rem",
+                                    height: "5rem",
+                                    color: "darkred",
+                                  }}
+                                />
+                              ) : course.format == "docx" ? (
+                                <GrDocumentWord
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              ) : course.format == "ppt" ? (
+                                <GrDocumentPpt
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              ) : course.format == "video" ? (
+                                <MdOndemandVideo
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              ) : (
+                                <FcFolder
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              )}
+                            </div>
+                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                              {course.name}
+                            </h2>
+                            {/* <p class="leading-relaxed text-base">
+                            {course.data["name"]}
+                          </p> */}
+                          </div>
+                        </div>
+                      ))
+                    )
+                  ) : (
+                    courses.map((course) => (
+                      <div class="xl:w-1/5 md:w-1/3 p-4">
+                        {/* {console.log(courses[0])} */}
+                        <div
+                          class="p-6 rounded-lg"
+                          onClick={() => openCCourse(course.key)}
+                        >
+                          <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
+                            <FcFolder
+                              style={{ width: "5rem", height: "5rem" }}
+                            />
+                          </div>
+                          <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                            {course.key}
+                          </h2>
+                          <p class="leading-relaxed text-base">
+                            {course.data["name"]}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))
+                  )
                 ) : (
-                  <h1>
-                    {/* {console.log("22222")} */}
-                    Fetching..................................................
-                  </h1>
+                  <h1>Fetching................</h1>
                 )}
               </div>
             </div>

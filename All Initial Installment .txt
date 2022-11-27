@@ -3,3 +3,5 @@ npm i firebase
 npm i react-router-dom
 npm install -D tailwindcss postcss autoprefixer
 npm i react-multi-select-component
+npm i @emotion/styled
+npm i @mui/material
