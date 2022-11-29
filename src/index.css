@@ -35,3 +35,7 @@ code {
 .icon1_rotate_180 {
   transform: rotateX(180deg);
 }
+
+.mySelect__value-container {
+  width: 10vw;
+}

@@ -384,14 +384,27 @@ function fetchTags() {
   let checkTag = [];
   const snapshot = onValue(ref(db, "courses/"), (snapshot) => {
     snapshot.forEach((childSnapshot) => {
-      const childData = childSnapshot.val();
-      if (!checkTag.includes(childData["tag"])) {
-        arr.push({
-          value: childData["tag"],
-          label: childData["tag"],
-          isFixed: true,
-        });
-        checkTag.push(childData["tag"]);
+      let childData = childSnapshot.val();
+      if (childData.tag != undefined && childData.tag != "") {
+        let splitTag = childData["tag"].split(", ");
+        for (var i = 0; i < splitTag.length; i++) {
+          if (!checkTag.includes(splitTag[i])) {
+            checkTag.push(splitTag[i]);
+            arr.push({
+              value: splitTag[i],
+              label: splitTag[i],
+              isFixed: true,
+            });
+          }
+        }
+        if (!checkTag.includes(childData["dept"])) {
+          checkTag.push(childData["dept"]);
+          arr.push({
+            value: childData["dept"],
+            label: childData["dept"],
+            isFixed: true,
+          });
+        }
       }
     });
   });

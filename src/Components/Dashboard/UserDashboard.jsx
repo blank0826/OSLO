@@ -3,8 +3,7 @@ import { useState } from "react";
 import { React } from "react";
 import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { FcFolder } from "react-icons/fc";
-import { FiLogOut } from "react-icons/fi";
-import { FaHashtag } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 import { IoBookSharp } from "react-icons/io5";
 import { BsPencilSquare } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ import { VscFilePdf } from "react-icons/vsc";
 import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
 import { MdOndemandVideo } from "react-icons/md";
 import { TiArrowLeftThick } from "react-icons/ti";
+import { CMultiSelect } from "@coreui/react-pro";
 import {
   LogoutStudent,
   fetchCourses,
@@ -50,29 +50,34 @@ export default function UserDashboard() {
 
   useEffect(() => {
     componentDidUpdate();
+    console.log(courses);
+    console.log("!");
     if (courses.length == 0) {
       let val = [];
       let arr = fetchCourses();
       val = val.concat(arr);
       setCourses(val);
       setAllCourses(val);
+      console.log("2");
     } else {
       if (enrollCourses.length == 0) {
         let val = [];
         let arr = accessUser();
         val = val.concat(arr);
-        console.log("eee");
-        console.log(val);
         setEnrollCourses(val);
+        console.log("3");
       }
+      console.log("4");
     }
 
     if (allTags.length == 0) {
+      console.log("5");
       let val = [];
       let arr = fetchTags();
       val = val.concat(arr);
       setAllTags(val);
     }
+    console.log(courses);
   }, [courses, enrollCourses]);
 
   function componentDidUpdate() {
@@ -92,28 +97,44 @@ export default function UserDashboard() {
   };
 
   const handleChange = (selectedOptions) => {
-    setTag({ selectedOptions });
-    console.log(tags);
+    var arr = [];
+    arr = arr.concat(selectedOptions);
+    setTag(arr);
+  };
+
+  const getSelectedTags = () => {
+    var arr = [];
+    tags.map((tag) => {
+      arr.push(tag.value);
+    });
+    var taggedCourseAll = [];
+    var uniqueKey = [];
+    for (var i = 0; i < arr.length; i++) {
+      var tag = arr[i];
+      for (var j = 0; j < allCourses.length; j++) {
+        var course = allCourses[j];
+        if (
+          course.data["dept"].includes(tag) ||
+          course.data["tag"].indexOf(tag) != -1
+        ) {
+          if (!uniqueKey.includes(course.key)) {
+            uniqueKey.push(course.key);
+            taggedCourseAll = taggedCourseAll.concat(course);
+          }
+        }
+      }
+    }
+    console.log(courses);
+    console.log(taggedCourseAll);
+    setBackDisplay(false);
+    setQueryVisibility(false);
+    setLocation("");
+    setCourses(taggedCourseAll);
   };
 
   const getDownloadURL = async (name) => {
     getURL(location, name);
   };
-
-  // const ColourOption = [
-  //   { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
-  //   { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
-  //   { value: "purple", label: "Purple", color: "#5243AA" },
-  //   { value: "red", label: "Red", color: "#FF5630", isFixed: true },
-  //   { value: "orange", label: "Orange", color: "#FF8B00" },
-  //   { value: "yellow", label: "Yellow", color: "#FFC400" },
-  //   { value: "green", label: "Green", color: "#36B37E" },
-  //   { value: "forest", label: "Forest", color: "#00875A" },
-  //   { value: "slate", label: "Slate", color: "#253858" },
-  //   { value: "silver", label: "Silver", color: "#666666" },
-  // ];
-
-  let tagOptions = [];
 
   const handleStudentSignOut = () => {
     LogoutStudent(navigate);
@@ -291,11 +312,6 @@ export default function UserDashboard() {
             <Button onClick={submitQuery}>Submit</Button>
           </DialogActions>
         </Dialog>
-        <FiLogOut
-          className="mr-3 cursor-pointer mt-4"
-          style={{ width: "2rem", height: "2rem" }}
-          onClick={handleStudentSignOut}
-        />
       </header>
       <div className="flex">
         <div className={`${open ? "w-0" : "w-60"} flex flex-col h-screen`}>
@@ -376,15 +392,12 @@ export default function UserDashboard() {
                       setCourses(fetchCourses);
                     }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
-                    >
-                      <IoBookSharp className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-2" />
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <IoBookSharp className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span className="text-gray-100 tracking-wider">
                         All Courses
                       </span>
-                    </a>
+                    </div>
                   </li>
                   <li
                     className="rounded-sm"
@@ -396,94 +409,51 @@ export default function UserDashboard() {
                       enrolledCourses();
                     }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
-                    >
-                      <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-1" />
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span className="text-gray-100 tracking-wider">
                         Enrolled In
                       </span>
-                    </a>
-                  </li>
-                  <li
-                    className="rounded-sm"
-                    style={{ marginBottom: "1.25rem" }}
-                  >
-                    <div className="flex items-center p-2 space-x-3 rounded-md">
-                      <FaHashtag className="w-6 h-6 text-gray-100 fill-white stroke-current stroke-" />
-                      <Select
-                        isMulti
-                        name="colors"
-                        options={allTags}
-                        className="basic-multi-select "
-                        classNamePrefix="select"
-                        onChange={handleChange}
-                      />
                     </div>
                   </li>
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 text-gray-100"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                    <div className="flex items-center p-2 space-x-3 rounded-md">
+                      <Select
+                        isMulti
+                        name="tags"
+                        options={allTags}
+                        className="basic-multi-select bg-purple-300 text-gray-800"
+                        classNamePrefix="mySelect"
+                        onChange={handleChange}
+                        placeholder="Tags"
+                      />
+                      <button
+                        className="bg-blue-500 hover:bg-blue-700 text-gray-800  py-2 px-4 rounded-full"
+                        onClick={getSelectedTags}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                        />
-                      </svg>
-                      <span className="text-gray-100">Orders</span>
-                    </a>
+                        Submit
+                      </button>
+                    </div>
                   </li>
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 text-gray-100"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      <span className="text-gray-100">Settings</span>
-                    </a>
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <span className="text-gray-100">Profile</span>
+                    </div>
                   </li>
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <a
-                      href="#"
-                      className="flex items-center p-2 space-x-3 rounded-md"
+                    <div
+                      className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
+                      onClick={handleStudentSignOut}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -500,7 +470,7 @@ export default function UserDashboard() {
                         />
                       </svg>
                       <span className="text-gray-100">Logout</span>
-                    </a>
+                    </div>
                   </li>
                 </ul>
               </div>
