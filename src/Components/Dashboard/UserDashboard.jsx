@@ -1,16 +1,24 @@
 import { useEffect } from "react";
-import { useState } from "react";
+import { useState, CSSProperties } from "react";
 import { React } from "react";
 import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { FcFolder } from "react-icons/fc";
 import { CgProfile } from "react-icons/cg";
 import { IoBookSharp } from "react-icons/io5";
 import { BsPencilSquare } from "react-icons/bs";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { BsInfoCircle } from "react-icons/bs";
+import { BiTimeFive } from "react-icons/bi";
+import { MdOutlineSpeakerNotes } from "react-icons/md";
+import { TbCreditCard } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { VscFilePdf } from "react-icons/vsc";
 import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
 import { MdOndemandVideo } from "react-icons/md";
 import { TiArrowLeftThick } from "react-icons/ti";
+// import { Audio } from "react-loader-spinner";
+import PulseLoader from "react-spinners/PulseLoader";
 import { CMultiSelect } from "@coreui/react-pro";
 import {
   LogoutStudent,
@@ -19,6 +27,7 @@ import {
   getURL,
   uploadQuery,
   fetchTags,
+  accessUserName,
 } from "../../Firebase";
 
 import logo from "../../images/logo.png";
@@ -36,6 +45,8 @@ export default function UserDashboard() {
   const [allCourses, setAllCourses] = useState([]);
   const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [openedCourseData, setOpenedCourseData] = useState("");
   const [allTags, setAllTags] = useState([]);
   const [tags, setTag] = useState([]);
   const [enrolled, setEnrolled] = useState(false);
@@ -46,10 +57,22 @@ export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [backDisplay, setBackDisplay] = useState(false);
 
+  let [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#C490E4");
+
+  const override = {
+    display: "block",
+    margin: "15rem 5rem 5rem 35rem",
+    borderColor: "#C490E4",
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
     componentDidUpdate();
+
+    document.body.classList.add("overflow-x-hidden");
+
     console.log(courses);
     console.log("!");
     if (courses.length == 0) {
@@ -146,7 +169,9 @@ export default function UserDashboard() {
     setBackDisplay(true);
     setLocation(location + "" + courseKey);
     // updateCourse(location + "/" + courseKey);
-    console.log(courseKey);
+    // console.log(courseKey);
+    var data = allCourses.filter((course) => course.key == courseKey);
+    setOpenedCourseData(data);
     let val = courses;
     let arr = val.filter((c) => c.key == courseKey);
     arr = arr[0].data.content;
@@ -272,13 +297,16 @@ export default function UserDashboard() {
 
   return (
     <>
-      <header class="py-6 bg-gray-700 text-white text-center flex justify-between">
-        <img
+      <header
+        class="py-6 text-center flex justify-around"
+        style={{ backgroundColor: "#FCE2DB" }}
+      >
+        {/* <img
           src={logo}
           className="ml-6"
           style={{ width: "3rem", height: "4rem" }}
-        />
-        <Button
+        /> */}
+        {/* <Button
           style={{
             display: queryVisibility ? "block" : "none",
             color: "#937DC2",
@@ -287,7 +315,25 @@ export default function UserDashboard() {
           onClick={handleClickOpen}
         >
           Raise Query
-        </Button>
+        </Button> */}
+        <h1
+          className="text-2xl"
+          style={{ color: "#9656A1", fontWeight: "500" }}
+        >
+          About OSLO
+        </h1>
+        <h1
+          className="text-2xl"
+          style={{ color: "#9656A1", fontWeight: "500" }}
+        >
+          Contact OSLO
+        </h1>
+        <h1
+          className="text-2xl"
+          style={{ color: "#9656A1", fontWeight: "500" }}
+        >
+          Creators
+        </h1>
         <Dialog open={openQueryDialog} onClose={handleClose}>
           <DialogTitle>Raise a Query</DialogTitle>
           <DialogContent>
@@ -313,8 +359,8 @@ export default function UserDashboard() {
           </DialogActions>
         </Dialog>
       </header>
-      <div className="flex">
-        <div className={`${open ? "w-0" : "w-60"} flex flex-col h-screen`}>
+      <div className="flex flex-row">
+        <div className={`${open ? "w-0" : "w-64"} flex flex-col h-screen`}>
           <div className="absolute mx-auto my-10">
             <button onClick={() => setOpen(!open)}>
               <BsFillArrowRightSquareFill
@@ -326,9 +372,9 @@ export default function UserDashboard() {
             className={` ${
               open ? "-translate-x-full" : "translate-x-0"
             } flex-col h-screen p-3 duration-300 absolute`}
-            style={{ background: "#937DC2" }}
+            style={{ background: "#C490E4" }}
           >
-            <div className="space-y-3">
+            <div className="space-y-4" style={{ marginTop: "4rem" }}>
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-white">Dashboard</h2>
                 <button onClick={() => setOpen(!open)}>
@@ -394,7 +440,10 @@ export default function UserDashboard() {
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
                       <IoBookSharp className="w-6 h-6 text-gray-100 fill-white stroke-current" />
-                      <span className="text-gray-100 tracking-wider">
+                      <span
+                        className="text-gray-100 tracking-wider"
+                        style={{ fontSize: "17px" }}
+                      >
                         All Courses
                       </span>
                     </div>
@@ -411,7 +460,10 @@ export default function UserDashboard() {
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
                       <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current" />
-                      <span className="text-gray-100 tracking-wider">
+                      <span
+                        className="text-gray-100 tracking-wider"
+                        style={{ fontSize: "17px" }}
+                      >
                         Enrolled In
                       </span>
                     </div>
@@ -420,23 +472,15 @@ export default function UserDashboard() {
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <div className="flex items-center p-2 space-x-3 rounded-md">
-                      <Select
-                        isMulti
-                        name="tags"
-                        options={allTags}
-                        className="basic-multi-select bg-purple-300 text-gray-800"
-                        classNamePrefix="mySelect"
-                        onChange={handleChange}
-                        placeholder="Tags"
-                      />
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-gray-800  py-2 px-4 rounded-full"
-                        onClick={getSelectedTags}
-                      >
-                        Submit
-                      </button>
-                    </div>
+                    <Select
+                      isMulti
+                      name="tags"
+                      options={allTags}
+                      className="basic-multi-select bg-purple-300 text-gray-800"
+                      classNamePrefix="mySelect"
+                      onChange={handleChange}
+                      placeholder="Tags"
+                    />
                   </li>
                   <li
                     className="rounded-sm"
@@ -444,7 +488,12 @@ export default function UserDashboard() {
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
                       <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
-                      <span className="text-gray-100">Profile</span>
+                      <span
+                        className="text-gray-100"
+                        style={{ fontSize: "17px" }}
+                      >
+                        Profile
+                      </span>
                     </div>
                   </li>
                   <li
@@ -469,7 +518,12 @@ export default function UserDashboard() {
                           d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                         />
                       </svg>
-                      <span className="text-gray-100">Logout</span>
+                      <span
+                        className="text-gray-100"
+                        style={{ fontSize: "17px" }}
+                      >
+                        Logout
+                      </span>
                     </div>
                   </li>
                 </ul>
@@ -479,24 +533,36 @@ export default function UserDashboard() {
         </div>
         <div className="container">
           <section class="text-gray-600 body-font">
+            <div
+              className={`${openDetail == false ? "" : "ml-8"} p-6`}
+              style={{
+                background: "#C490E4",
+                fontSize: "22px",
+                letterSpacing: "0.04em",
+                color: "#FCE2DB",
+                fontWeight: "500",
+              }}
+            >
+              Hello {accessUserName()} !
+            </div>
             <TiArrowLeftThick
               onClick={goBack}
               style={{
+                marginLeft: "2rem",
                 width: "2rem",
                 height: "2rem",
                 display: backDisplay ? "block" : "none",
               }}
             ></TiArrowLeftThick>
-            <div class="container px-5 py-24 mx-auto">
+            <div class="container px-8 py-18 mx-auto">
               <div class="flex flex-wrap -m-4">
-                {/* {console.log("2 " + allCourses.length)} */}
-                {/* {console.log(allCourses)} */}
                 {courses.length != 0 ? (
                   courses[0].key == undefined ? (
                     courses[0].format == undefined ? (
+                      (openDetail == false ? setOpenDetail(true) : "",
                       courses.map((course, i) => (
                         <div class="xl:w-1/5 md:w-1/3 p-4">
-                          {/* {console.log(courses[0])} */}
+                          {/* {console.log(allCourses)} */}
                           <div
                             class="p-6 rounded-lg"
                             onClick={() => openFCourse(i)}
@@ -514,7 +580,7 @@ export default function UserDashboard() {
                         </p> */}
                           </div>
                         </div>
-                      ))
+                      )))
                     ) : (
                       courses.map((course) => (
                         <div class="xl:w-1/5 md:w-1/3 p-4">
@@ -560,6 +626,7 @@ export default function UserDashboard() {
                       ))
                     )
                   ) : (
+                    (openDetail == true ? setOpenDetail(false) : "",
                     courses.map((course) => (
                       <div class="xl:w-1/5 md:w-1/3 p-4">
                         {/* {console.log(courses[0])} */}
@@ -580,14 +647,209 @@ export default function UserDashboard() {
                           </p>
                         </div>
                       </div>
-                    ))
+                    )))
                   )
                 ) : (
-                  <h1>Fetching................</h1>
+                  <PulseLoader
+                    color={color}
+                    loading={loading}
+                    cssOverride={override}
+                    size={18}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
                 )}
               </div>
             </div>
           </section>
+        </div>
+        <div
+          className={`${
+            openDetail ? (open == false ? "w-72" : "w-60") : "w-0"
+          } flex flex-col h-screen`}
+        >
+          <div
+            style={{ backgroundColor: "#C490E4" }}
+            className={` ${
+              openDetail ? "translate-x-0" : "translate-x-full"
+            } flex-col h-screen p-3 duration-300 absolute right-0`}
+          >
+            <div className="space-y-4" style={{ marginTop: "4rem" }}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold" style={{ color: "#FFDABB" }}>
+                  Course Details
+                </h2>
+              </div>
+              <div className="flex-1">
+                <ul className="pt-2 pb-4 space-y-1 text-sm">
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      setCourses(fetchCourses);
+                    }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <FaChalkboardTeacher
+                        className="w-6 h-6 stroke-current"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span
+                        className="tracking-wider font-bold"
+                        style={{ color: "#FFDABB" }}
+                      >
+                        Instructor
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          {openedCourseData[0].data["faculty"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      enrolledCourses();
+                    }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <HiOutlineOfficeBuilding
+                        className="w-6 h-6 stroke-current stroke-1"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span
+                        className="tracking-wider font-bold"
+                        style={{ color: "#FFDABB" }}
+                      >
+                        Office
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          {openedCourseData[0].data["office"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      enrolledCourses();
+                    }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <BiTimeFive
+                        className="w-6 h-6 stroke-current"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span
+                        className="tracking-wider font-bold"
+                        style={{ color: "#FFDABB" }}
+                      >
+                        Office Timing
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          {openedCourseData[0].data["officeTiming"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      enrolledCourses();
+                    }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <BsInfoCircle
+                        className="w-6 h-6"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span
+                        className="tracking-wider font-bold"
+                        style={{ color: "#FFDABB" }}
+                      >
+                        Pre-req
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          {openedCourseData[0].data["prereq"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <MdOutlineSpeakerNotes
+                        className="w-6 h-6 stroke-current"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span className="font-bold" style={{ color: "#FFDABB" }}>
+                        Note
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          {openedCourseData[0].data["note"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <TbCreditCard
+                        className="w-6 h-6 stroke-current"
+                        style={{ color: "#FFDABB" }}
+                      />
+                      <span className="font-bold" style={{ color: "#FFDABB" }}>
+                        Units
+                      </span>
+                      {openedCourseData != "" ? (
+                        <span className="tracking-wider">
+                          L-{openedCourseData[0].data.credit["L"]}&nbsp;P-
+                          {openedCourseData[0].data.credit["P"]}&nbsp;T-
+                          {openedCourseData[0].data.credit["T"]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

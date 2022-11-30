@@ -422,6 +422,11 @@ const accessUser = () => {
   return array;
 };
 
+const accessUserName = () => {
+  if (auth.currentUser != null && auth.currentUser != "")
+    return auth.currentUser["displayName"];
+};
+
 const uploadQuery = (locationCourse, queryContent) => {
   const pathRef = ref(db, "courses/" + locationCourse + "/query");
   let index = 0;
@@ -448,4 +453,5 @@ export {
   accessUser,
   getURL,
   uploadQuery,
+  accessUserName,
 };
