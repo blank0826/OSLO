@@ -11,7 +11,6 @@ import { VscFilePdf } from "react-icons/vsc";
 import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
 import { MdOndemandVideo } from "react-icons/md";
 import { TiArrowLeftThick } from "react-icons/ti";
-import { CMultiSelect } from "@coreui/react-pro";
 import {
   LogoutStudent,
   fetchCourses,
@@ -19,6 +18,7 @@ import {
   getURL,
   uploadQuery,
   fetchTags,
+  fetchDept,
 } from "../../Firebase";
 
 import logo from "../../images/logo.png";
@@ -30,6 +30,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import UserProfile from "../Profile/UserProfile";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
@@ -37,7 +38,6 @@ export default function UserDashboard() {
   const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
   const [allTags, setAllTags] = useState([]);
-  const [tags, setTag] = useState([]);
   const [enrolled, setEnrolled] = useState(false);
   const [enrollCourses, setEnrollCourses] = useState([]);
   const [courseSearch, setCourseSearch] = useState("");
@@ -45,6 +45,7 @@ export default function UserDashboard() {
   const [openQueryDialog, setQueryDialog] = useState(false);
   const [query, setQuery] = useState("");
   const [backDisplay, setBackDisplay] = useState(false);
+  const [profileDisplay, setProfileDisplay] = useState(false);
 
   const navigate = useNavigate();
 
@@ -73,9 +74,28 @@ export default function UserDashboard() {
     if (allTags.length == 0) {
       console.log("5");
       let val = [];
-      let arr = fetchTags();
+      let arr = fetchDept();
       val = val.concat(arr);
-      setAllTags(val);
+      console.log(val);
+      let val2 = [];
+      let arr2 = fetchTags();
+      val2 = val2.concat(arr2);
+      console.log(val2);
+
+      if (val.length != 0 && val2.length != 0) {
+        const groupedOptions = [
+          {
+            label: "Department",
+            options: val,
+          },
+          {
+            label: "Tags",
+            options: val2,
+          },
+        ];
+
+        setAllTags(groupedOptions);
+      }
     }
     console.log(courses);
   }, [courses, enrollCourses]);
@@ -99,18 +119,16 @@ export default function UserDashboard() {
   const handleChange = (selectedOptions) => {
     var arr = [];
     arr = arr.concat(selectedOptions);
-    setTag(arr);
-  };
+    // setTag(arr);
 
-  const getSelectedTags = () => {
-    var arr = [];
-    tags.map((tag) => {
-      arr.push(tag.value);
+    var arr2 = [];
+    arr.map((tag) => {
+      arr2.push(tag.value);
     });
     var taggedCourseAll = [];
     var uniqueKey = [];
-    for (var i = 0; i < arr.length; i++) {
-      var tag = arr[i];
+    for (var i = 0; i < arr2.length; i++) {
+      var tag = arr2[i];
       for (var j = 0; j < allCourses.length; j++) {
         var course = allCourses[j];
         if (
@@ -272,7 +290,10 @@ export default function UserDashboard() {
 
   return (
     <>
-      <header class="py-6 bg-gray-700 text-white text-center flex justify-between">
+      <header
+        class="py-6 bg-gray-700 text-white text-center flex justify-between"
+        style={{ height: "12vh" }}
+      >
         <img
           src={logo}
           className="ml-6"
@@ -314,7 +335,10 @@ export default function UserDashboard() {
         </Dialog>
       </header>
       <div className="flex">
-        <div className={`${open ? "w-0" : "w-60"} flex flex-col h-screen`}>
+        <div
+          className={`${open ? "w-0" : "w-60"} flex flex-col`}
+          style={{ height: "88vh" }}
+        >
           <div className="absolute mx-auto my-10">
             <button onClick={() => setOpen(!open)}>
               <BsFillArrowRightSquareFill
@@ -325,8 +349,8 @@ export default function UserDashboard() {
           <div
             className={` ${
               open ? "-translate-x-full" : "translate-x-0"
-            } flex-col h-screen p-3 duration-300 absolute`}
-            style={{ background: "#937DC2" }}
+            } flex-col p-3 duration-300 absolute`}
+            style={{ background: "#937DC2", height: "88vh" }}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -388,6 +412,7 @@ export default function UserDashboard() {
                     onClick={() => {
                       setQueryVisibility(false);
                       setBackDisplay(false);
+                      setProfileDisplay(false);
                       setLocation("");
                       setCourses(fetchCourses);
                     }}
@@ -406,6 +431,7 @@ export default function UserDashboard() {
                       setQueryVisibility(false);
                       setBackDisplay(false);
                       setLocation("");
+                      setProfileDisplay(false);
                       enrolledCourses();
                     }}
                   >
@@ -430,19 +456,16 @@ export default function UserDashboard() {
                         onChange={handleChange}
                         placeholder="Tags"
                       />
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-gray-800  py-2 px-4 rounded-full"
-                        onClick={getSelectedTags}
-                      >
-                        Submit
-                      </button>
                     </div>
                   </li>
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                   >
-                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                    <div
+                      className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
+                      onClick={() => setProfileDisplay(true)}
+                    >
                       <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span className="text-gray-100">Profile</span>
                     </div>
@@ -487,11 +510,13 @@ export default function UserDashboard() {
                 display: backDisplay ? "block" : "none",
               }}
             ></TiArrowLeftThick>
-            <div class="container px-5 py-24 mx-auto">
+            <div class="container px-5 py-4 mx-auto">
               <div class="flex flex-wrap -m-4">
                 {/* {console.log("2 " + allCourses.length)} */}
                 {/* {console.log(allCourses)} */}
-                {courses.length != 0 ? (
+                {profileDisplay ? (
+                  <UserProfile></UserProfile>
+                ) : courses.length != 0 ? (
                   courses[0].key == undefined ? (
                     courses[0].format == undefined ? (
                       courses.map((course, i) => (

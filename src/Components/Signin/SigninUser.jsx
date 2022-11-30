@@ -12,7 +12,7 @@ export default function SigninUser() {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    HandleSignupUser(navigate, email, password, name, rollnumber, repeat);
+    HandleSignupUser(navigate, email, password, name, rollnumber, repeat, 1);
   };
 
   return (

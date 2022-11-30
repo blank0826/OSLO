@@ -8,8 +8,22 @@ import {
   updateProfile,
   sendEmailVerification,
 } from "firebase/auth";
-import { getDatabase, ref, set, onValue } from "firebase/database";
-import { getStorage, ref as sRef, getDownloadURL } from "firebase/storage";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue,
+  query,
+  orderByChild,
+  equalTo,
+} from "firebase/database";
+import {
+  getStorage,
+  ref as sRef,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
@@ -26,6 +40,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getDatabase(app);
 const storage = getStorage();
+
+let countUserActivity = 0;
 
 function validateField(field) {
   if (field == null) {
@@ -89,6 +105,8 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
         // if (val.email == email && val.password == password) {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
+            console.log(email);
+            console.log(password);
             console.log(auth.currentUser.accessToken);
             if (!auth.currentUser.emailVerified) {
               window.alert("Verify your email!");
@@ -110,6 +128,7 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
 
               // localStorage.setItem("Bearer", auth.currentUser.accessToken);
               // localStorage.setItem("OrphanageId", id);
+              countUserActivity = 1;
               window.alert("Signed in!");
               navigate("/DashboardUser");
             }
@@ -123,57 +142,87 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
   }
 };
 
-const HandleSignupUser = (navigate, email, password, name, rollno, repeat) => {
-  let flag = true;
-  // localStorage.setItem("SignedIn", "");
+const checkRollNumberExists = (rollno, callback) => {
+  const mostViewedPosts = query(
+    ref(db, "students"),
+    orderByChild("roll_number"),
+    equalTo(rollno)
+  );
 
-  if (!validateEmail(email)) {
-    window.alert("Enter a valid email address!");
-    flag = false;
-  }
+  onValue(mostViewedPosts, (snapshot) => {
+    if (snapshot.exists()) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+};
 
-  if (!validatePassword(password)) {
-    window.alert(
-      "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
-    );
-    flag = false;
-  }
+const HandleSignupUser = async (
+  navigate,
+  email,
+  password,
+  name,
+  rollno,
+  repeat,
+  checkOnce
+) => {
+  checkRollNumberExists(rollno, function (results) {
+    let flag = true;
+    if (!validateEmail(email)) {
+      window.alert("Enter a valid email address!");
+      flag = false;
+    }
 
-  if (password !== repeat) {
-    window.alert("Both passwords must be same!");
-    flag = false;
-  }
+    if (!validatePassword(password)) {
+      window.alert(
+        "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
+      );
+      flag = false;
+    }
 
-  if (flag) {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        window.alert("User Created");
-        const user = userCredential.user;
-        writeUserData(user.uid, name, email, rollno);
-        sendEmailVerification(user).then(() => {
-          // Email verification sent!
-          let msg = "An email verification link has been sent to " + user.email;
-          window.alert(msg);
-        });
+    if (password !== repeat) {
+      window.alert("Both passwords must be same!");
+      flag = false;
+    }
 
-        updateProfile(auth.currentUser, {
-          displayName: name,
-        })
-          .then(() => {
-            // localStorage.setItem("SignedIn", flag);
-            navigate("/LoginUser");
-            //send email verification
+    if (checkOnce == 1) {
+      if (flag && !results) {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            window.alert("User Created");
+            checkOnce = checkOnce + 1;
+            const user = userCredential.user;
+            writeUserData(user.uid, name, email, rollno);
+            sendEmailVerification(user).then(() => {
+              // Email verification sent!
+              let msg =
+                "An email verification link has been sent to " + user.email;
+              window.alert(msg);
+            });
+
+            updateProfile(auth.currentUser, {
+              displayName: name,
+            })
+              .then(() => {
+                // localStorage.setItem("SignedIn", flag);
+                navigate("/LoginUser");
+                //send email verification
+              })
+              .catch((error) => {
+                const errorMessage = error.message;
+                window.alert(errorMessage);
+              });
           })
           .catch((error) => {
             const errorMessage = error.message;
             window.alert(errorMessage);
           });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        window.alert(errorMessage);
-      });
-  }
+      } else if (results) {
+        window.alert("Roll number already exists! Kindly check and try again");
+      }
+    }
+  });
 };
 
 const ForgotPasswordFirebase = async (navigate, email) => {
@@ -342,16 +391,70 @@ function writeProfData(userId, name, email, contact, password) {
 //--------LOGOUT---------
 const LogoutStudent = (navigate) => {
   if (auth.currentUser.uid != null) {
+    // const pathRed
+
     set(ref(db, "token/" + auth.currentUser.uid), {
       token: null,
     }).catch((error) => {
       window.alert(error.message);
     });
   }
-  navigate("/LoginUser");
-  signOut(auth);
+
   window.alert("Signed out!");
-  //localStorage.removeItem("Bearer");
+  signOut(auth);
+  navigate("/LoginUser");
+  localStorage.removeItem("Bearer");
+};
+
+const updateUserDetails = (uid) => {
+  var timeStamp = new Date();
+  var date =
+    timeStamp.getDate() +
+    "_" +
+    (timeStamp.getMonth() + 1) +
+    "_" +
+    timeStamp.getFullYear();
+
+  let arr;
+
+  onValue(ref(db, "students/" + uid), (snapshot) => {
+    arr = snapshot.val();
+  });
+
+  const updates = {};
+  updates["/students/" + uid + "/lastLogin"] = new Date().getTime();
+  updates["/students/" + uid + "/activity/" + date] = {
+    work:
+      countUserActivity +
+      (arr.activity[date] == undefined ? 0 : arr.activity[date].work),
+  };
+
+  console.log(updates);
+
+  // arr.activity[date] = {
+  //   work:
+  //     ,
+  // };
+
+  // arr.lastLogin = new Date().getTime();
+
+  // console.log(arr.activity);
+  // console.log(arr.lastLogin);
+  // let obj = {
+  //   activity: arr.activity,
+  //   branch: arr.branch,
+  //   courses: arr.courses,
+  //   email: arr.email,
+  //   lastLogin: arr.lastLogin,
+  //   name: arr.name,
+  //   roll_number: arr.roll_number,
+  // };
+
+  // console.log(obj);
+
+  update(ref(db), updates);
+
+  return;
 };
 
 function fetchCourses() {
@@ -372,6 +475,7 @@ const getURL = (location, name) => {
   const pathReference = sRef(storage, location + "/" + name);
   getDownloadURL(pathReference)
     .then((url) => {
+      countUserActivity++;
       window.open(url, "_blank", "noopener,noreferrer");
     })
     .catch((error) => {
@@ -397,14 +501,33 @@ function fetchTags() {
             });
           }
         }
-        if (!checkTag.includes(childData["dept"])) {
-          checkTag.push(childData["dept"]);
-          arr.push({
-            value: childData["dept"],
-            label: childData["dept"],
-            isFixed: true,
-          });
-        }
+        // if (!checkTag.includes(childData["dept"])) {
+        //   checkTag.push(childData["dept"]);
+        //   arr.push({
+        //     value: childData["dept"],
+        //     label: childData["dept"],
+        //     isFixed: true,
+        //   });
+        // }
+      }
+    });
+  });
+  return arr;
+}
+
+function fetchDept() {
+  let arr = [];
+  let checkTag = [];
+  const snapshot = onValue(ref(db, "courses/"), (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      let childData = childSnapshot.val();
+      if (!checkTag.includes(childData["dept"])) {
+        checkTag.push(childData["dept"]);
+        arr.push({
+          value: childData["dept"],
+          label: childData["dept"],
+          isFixed: true,
+        });
       }
     });
   });
@@ -436,6 +559,50 @@ const uploadQuery = (locationCourse, queryContent) => {
   });
 };
 
+const getStudentData = () => {
+  var uid = auth.currentUser["uid"];
+  let array = [];
+  var userRef = ref(db, "students/" + uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    array = array.concat(data);
+  });
+  return array;
+};
+
+const getPhotoUrl = () => {
+  let url = "";
+  var userRef = ref(db, "students/" + auth.currentUser.uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    console.log(data);
+    url = data.photoURL;
+  });
+  // console.log(url);
+  return url;
+};
+
+const uploadUserPhoto = (file) => {
+  const pathReference = sRef(storage, auth.currentUser.uid + "/" + file.name);
+  const uploadTask = uploadBytesResumable(pathReference, file);
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {},
+    (error) => {
+      alert(error);
+    },
+    () => {
+      window.alert("Uploaded Successfully!");
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        const updates = {};
+        updates["/students/" + auth.currentUser.uid + "/photoURL"] =
+          downloadURL;
+        update(ref(db), updates);
+      });
+    }
+  );
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -448,4 +615,9 @@ export {
   accessUser,
   getURL,
   uploadQuery,
+  fetchDept,
+  getStudentData,
+  updateUserDetails,
+  uploadUserPhoto,
+  getPhotoUrl,
 };

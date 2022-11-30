@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { React, useState } from "react";
 // import { ProfDashboard } from "./Dashboard";
 import { Link, useNavigate } from "react-router-dom";
-import { HandleLoginFirebaseUser } from "../../Firebase";
+import { HandleLoginFirebaseUser, updateUserDetails } from "../../Firebase";
 require("typeface-abril-fatface");
 
 export default function LoginUser() {
@@ -26,6 +26,11 @@ export default function LoginUser() {
   useEffect(() => {
     setEmail(localStorage.getItem("emailUser"));
     setPassword(localStorage.getItem("passwordUser"));
+    if(localStorage.getItem("ComingFromLogoutUser") != undefined){
+      var uid = localStorage.getItem("ComingFromLogoutUser");
+      localStorage.removeItem("ComingFromLogoutUser");
+      updateUserDetails(uid);
+    }
   }, []);
 
   return (
