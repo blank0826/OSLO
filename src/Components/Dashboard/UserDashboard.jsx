@@ -404,13 +404,13 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <h2
                   className="text-xl font-bold"
-                  style={{ color: "#FCE2DB", fontFamily: "Merriweather" }}
+                  style={{ color: "#F7E8F6", fontFamily: "Merriweather" }}
                 >
                   Dashboard
                 </h2>
                 <button
                   onClick={() => setOpen(!open)}
-                  style={{ color: "#FCE2DB" }}
+                  style={{ color: "#F7E8F6" }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -493,7 +493,7 @@ export default function UserDashboard() {
                         className="text-gray-100 tracking-wider"
                         style={{
                           fontSize: "17px",
-                          color: "#FCE2DB",
+                          color: "#F7E8F6",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
                         }}
@@ -519,7 +519,7 @@ export default function UserDashboard() {
                         className="text-gray-100 tracking-wider"
                         style={{
                           fontSize: "17px",
-                          color: "#FCE2DB",
+                          color: "#F7E8F6",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
                         }}
@@ -534,14 +534,19 @@ export default function UserDashboard() {
                   >
                     <div
                       className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
-                      onClick={() => setProfileDisplay(true)}
+                      onClick={() => {
+                        setProfileDisplay(true);
+                        setOpenDetail(false);
+                        setBackDisplay(false);
+                        setQueryVisibility(false);
+                      }}
                     >
                       <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span
                         className="text-gray-100"
                         style={{
                           fontSize: "17px",
-                          color: "#FCE2DB",
+                          color: "#F7E8F6",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
                         }}
@@ -576,7 +581,7 @@ export default function UserDashboard() {
                         className="text-gray-100"
                         style={{
                           fontSize: "17px",
-                          color: "#FCE2DB",
+                          color: "#F7E8F6",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
                         }}
@@ -749,7 +754,7 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <h2
                   className="text-xl font-bold"
-                  style={{ color: "#FFDABB", fontFamily: "Merriweather" }}
+                  style={{ color: "#F7E8F6", fontFamily: "Merriweather" }}
                 >
                   Course Details
                 </h2>
@@ -769,12 +774,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <FaChalkboardTeacher
                         className="w-6 h-6 stroke-current"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="tracking-wider font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -789,7 +794,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           {openedCourseData[0].data["faculty"]}
@@ -812,12 +817,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <HiOutlineOfficeBuilding
                         className="w-6 h-6 stroke-current stroke-1"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="tracking-wider font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -832,7 +837,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           {openedCourseData[0].data["office"]}
@@ -855,12 +860,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <BiTimeFive
                         className="w-6 h-6 stroke-current"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="tracking-wider font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -875,7 +880,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           {openedCourseData[0].data["officeTiming"]}
@@ -898,12 +903,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <BsInfoCircle
                         className="w-6 h-6"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="tracking-wider font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -918,7 +923,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           {openedCourseData[0].data["prereq"]}
@@ -935,12 +940,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <MdOutlineSpeakerNotes
                         className="w-6 h-6 stroke-current"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -955,7 +960,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           {openedCourseData[0].data["note"]}
@@ -972,12 +977,12 @@ export default function UserDashboard() {
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <TbCreditCard
                         className="w-6 h-6 stroke-current"
-                        style={{ color: "#FFDABB" }}
+                        style={{ color: "#F7E8F6" }}
                       />
                       <span
                         className="font-bold"
                         style={{
-                          color: "#FFDABB",
+                          color: "#F7E8F6",
                           fontSize: "17px",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
@@ -992,7 +997,7 @@ export default function UserDashboard() {
                             fontSize: "15px",
                             fontWeight: "700",
                             fontFamily: "Merriweather",
-                            color: "#FFDABB",
+                            color: "#F7E8F6",
                           }}
                         >
                           L-{openedCourseData[0].data.credit["L"]}&nbsp;P-
