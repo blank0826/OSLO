@@ -608,6 +608,17 @@ const uploadUserPhoto = (file) => {
   );
 };
 
+const fetchEmailID = () => {
+  let email = "";
+  var userRef = ref(db, "students/" + auth.currentUser.uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    email = data.email;
+  });
+  console.log(email);
+  return email;
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -626,4 +637,5 @@ export {
   uploadUserPhoto,
   getPhotoUrl,
   accessUserName,
+  fetchEmailID,
 };
