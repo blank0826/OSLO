@@ -43,6 +43,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserProfile from "../Profile/UserProfile";
+import UserQuery from "./UserQuery";
+import { flexbox } from "@mui/system";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
@@ -60,6 +62,7 @@ export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [backDisplay, setBackDisplay] = useState(false);
   const [profileDisplay, setProfileDisplay] = useState(false);
+  const [showQueries, setShowQueries] = useState(false);
 
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#C490E4");
@@ -483,6 +486,8 @@ export default function UserDashboard() {
                       setQueryVisibility(false);
                       setBackDisplay(false);
                       setProfileDisplay(false);
+                      // setOpenedCourseData("");
+                      setShowQueries(false);
                       setLocation("");
                       setCourses(fetchCourses);
                     }}
@@ -509,6 +514,8 @@ export default function UserDashboard() {
                       setQueryVisibility(false);
                       setBackDisplay(false);
                       setLocation("");
+                      // setOpenedCourseData("");
+                      setShowQueries(false);
                       setProfileDisplay(false);
                       enrolledCourses();
                     }}
@@ -538,6 +545,7 @@ export default function UserDashboard() {
                         setProfileDisplay(true);
                         setOpenDetail(false);
                         setBackDisplay(false);
+                        showQueries(false);
                         setQueryVisibility(false);
                       }}
                     >
@@ -552,6 +560,35 @@ export default function UserDashboard() {
                         }}
                       >
                         Profile
+                      </span>
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <div
+                      className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
+                      onClick={() => {
+                        setQueryVisibility(false);
+                        setBackDisplay(false);
+                        setLocation("");
+                        // setOpenedCourseData("");
+                        setShowQueries(true);
+                        setProfileDisplay(false);
+                      }}
+                    >
+                      <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <span
+                        className="text-gray-100"
+                        style={{
+                          fontSize: "17px",
+                          color: "#FCE2DB",
+                          fontWeight: "700",
+                          fontFamily: "Merriweather",
+                        }}
+                      >
+                        My Queries
                       </span>
                     </div>
                   </li>
@@ -598,10 +635,9 @@ export default function UserDashboard() {
         <div className="container">
           <section class="text-gray-600 body-font">
             <div
-              className={`${openDetail == false ? "" : "ml-8"} p-6 ${
-                open ? "ml-0" : ""
-              }`}
               style={{
+                justifyContent: "space-between",
+                display: "flex",
                 background: "#C490E4",
                 fontSize: "30px",
                 letterSpacing: "0.04em",
@@ -610,7 +646,28 @@ export default function UserDashboard() {
                 fontFamily: "Playfair Display",
               }}
             >
-              Hello {accessUserName()} !
+              <div
+                className={`${openDetail == false ? "" : "ml-8"} p-6 ${
+                  open ? "ml-0" : ""
+                }`}
+              >
+                Hello {accessUserName()} !
+              </div>
+              <Button
+                style={{
+                  height: "4rem",
+                  marginTop: "1rem",
+                  marginBottom: "1rem",
+                  marginRight: "11rem",
+                  display: queryVisibility ? "block" : "none",
+                  color: "#FCE2DB",
+                  borderColor: "#FCE2DB",
+                }}
+                variant="outlined"
+                onClick={handleClickOpen}
+              >
+                Raise Query
+              </Button>
             </div>
             <RiFolderReceivedFill
               className="cursor-pointer"
@@ -628,9 +685,9 @@ export default function UserDashboard() {
 
             <div class="container px-5 py-4 mx-auto">
               <div class="flex flex-wrap -m-4">
-                {/* {console.log("2 " + allCourses.length)} */}
-                {/* {console.log(allCourses)} */}
-                {profileDisplay ? (
+                {showQueries ? (
+                  <UserQuery allCourses={allCourses}></UserQuery>
+                ) : profileDisplay ? (
                   <UserProfile></UserProfile>
                 ) : courses.length != 0 ? (
                   courses[0].key == undefined ? (

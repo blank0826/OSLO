@@ -8,3 +8,4 @@ npm i @mui/material
 npm i react-spinners
 npm i chart.js
 npm i react-chartjs-2
+npm i @kunukn/react-collapse
