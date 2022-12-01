@@ -174,6 +174,13 @@ const HandleSignupUser = async (
       flag = false;
     }
 
+    console.log(email.substring(email.indexOf("@")));
+
+    if (email.substring(email.indexOf("@")) != "@snu.edu.in") {
+      window.alert("Enter SNU email address!");
+      flag = false;
+    }
+
     if (!validatePassword(password)) {
       window.alert(
         "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
