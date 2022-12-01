@@ -6,3 +6,5 @@ npm i react-multi-select-component
 npm i @emotion/styled
 npm i @mui/material
 npm i react-spinners
+npm i chart.js
+npm i react-chartjs-2
