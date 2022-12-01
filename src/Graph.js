@@ -85,10 +85,10 @@ const Graph = ({ info }) => {
   return (
     <>
       <div
-        className="rounded shadow-xl overflow-hidden w-full md:flex"
-        style={{ width: "450px", height: "300px" }}
+        className="rounded shadow-xl overflow-hidden w-full md:flex m-auto"
+        style={{ width: "650px", height: "400px" }}
       >
-        <div className="flex w-full px-5 pb-4 pt-8 bg-white-500 text-black items-center">
+        <div className="flex w-full px-5 pb-4 bg-white-500 text-black items-center">
           <Line type="line" data={data} options={options} />
         </div>
         {/* <div className=" border-gray-200 p-6 rounded-lg">

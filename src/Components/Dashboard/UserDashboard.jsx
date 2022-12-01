@@ -380,7 +380,7 @@ export default function UserDashboard() {
       <div className="flex flex-row">
         <div
           className={`${open ? "w-0" : "w-64"} flex flex-col`}
-          // style={{ height: "88vh" }}
+          style={{ height: "158vh" }}
         >
           <div className="absolute mx-auto my-10">
             <button>
@@ -398,7 +398,7 @@ export default function UserDashboard() {
             className={` ${
               open ? "-translate-x-full" : "translate-x-0"
             } flex-col h-screen p-3 duration-300 absolute`}
-            style={{ background: "#C490E4" }}
+            style={{ background: "#C490E4", height: "158vh" }}
           >
             <div className="space-y-4" style={{ marginTop: "4rem" }}>
               <div className="flex items-center justify-between">

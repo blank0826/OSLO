@@ -10,6 +10,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
+html {
+  height: 100%;
 }
 
 code {
@@ -42,8 +47,8 @@ code {
 }
 
 .card {
-  width: 310px;
-  height: 66vh;
+  /* width: 310px; */
+  /* height: 66vh; */
   padding: 15px;
   border-radius: 25px;
   display: flex;
