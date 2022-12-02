@@ -1,11 +1,6 @@
-import { useEffect } from "react";
-import { useState, CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { React } from "react";
-import {
-  BsFillArrowRightSquareFill,
-  BsFillArrowLeftSquareFill,
-} from "react-icons/bs";
-import { FcFolder } from "react-icons/fc";
+import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { IoBookSharp } from "react-icons/io5";
 import { BsPencilSquare } from "react-icons/bs";
@@ -21,7 +16,6 @@ import { GrDocumentWord, GrDocumentPpt } from "react-icons/gr";
 import { MdOndemandVideo } from "react-icons/md";
 import { RiFolderReceivedFill } from "react-icons/ri";
 import PulseLoader from "react-spinners/PulseLoader";
-import { CMultiSelect } from "@coreui/react-pro";
 import lockedFolder from "../../images/lock.png";
 import enrolledFolder from "../../images/open-folder.png";
 import {
@@ -35,8 +29,6 @@ import {
   accessUserName,
 } from "../../Firebase";
 
-import AnimationVideo from "../../images/AnimationVideo.mp4";
-import logo from "../../images/logo.png";
 import Select from "react-select";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -47,8 +39,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserProfile from "../Profile/UserProfile";
 import UserQuery from "./UserQuery";
-import { flexbox } from "@mui/system";
-import { hover } from "@testing-library/user-event/dist/hover";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);

@@ -418,6 +418,23 @@ const LogoutStudent = (navigate) => {
   localStorage.removeItem("Bearer");
 };
 
+const LogoutProf = (navigate) => {
+  if (auth.currentUser.uid != null) {
+    // const pathRed
+
+    set(ref(db, "token/" + auth.currentUser.uid), {
+      token: null,
+    }).catch((error) => {
+      window.alert(error.message);
+    });
+  }
+  // localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
+  window.alert("Signed out!");
+  signOut(auth);
+  navigate("/LoginUser");
+  localStorage.removeItem("Bearer");
+};
+
 const updateUserDetails = (uid) => {
   var timeStamp = new Date();
   var date =
@@ -642,4 +659,5 @@ export {
   getPhotoUrl,
   accessUserName,
   fetchEmailID,
+  LogoutProf,
 };
