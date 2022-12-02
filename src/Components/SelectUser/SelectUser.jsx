@@ -9,7 +9,7 @@ export default function SelectUser() {
   useEffect(() => {
     setTimeout(() => {
       setAnimLoading(false);
-    }, 4000);
+    }, 2000);
   }, []);
   return (
     <>

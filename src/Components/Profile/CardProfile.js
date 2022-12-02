@@ -58,6 +58,11 @@ export default function CardProfile() {
             type="submit"
             className="saveProfileButton"
             onClick={uploadPhoto}
+            style={{
+              background: "#C490E4",
+              color: "#F7E8F6",
+              fontFamily: "Merriweather",
+            }}
           >
             Upload{" "}
           </button>

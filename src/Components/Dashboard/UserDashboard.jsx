@@ -22,6 +22,8 @@ import { MdOndemandVideo } from "react-icons/md";
 import { RiFolderReceivedFill } from "react-icons/ri";
 import PulseLoader from "react-spinners/PulseLoader";
 import { CMultiSelect } from "@coreui/react-pro";
+import lockedFolder from "../../images/lock.png";
+import enrolledFolder from "../../images/open-folder.png";
 import {
   LogoutStudent,
   fetchCourses,
@@ -46,6 +48,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import UserProfile from "../Profile/UserProfile";
 import UserQuery from "./UserQuery";
 import { flexbox } from "@mui/system";
+import { hover } from "@testing-library/user-event/dist/hover";
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
@@ -319,6 +322,28 @@ export default function UserDashboard() {
       }
     }
   };
+
+  function handleHover(itemClass) {
+    var moduleName = itemClass.target.innerText;
+    if (moduleName.indexOf("Module") == -1) {
+      var folderKey = moduleName.substring(0, moduleName.indexOf("\n"));
+      document.getElementById(folderKey).classList.add("folder");
+    } else {
+      var folderId = moduleName.replaceAll(" ", "");
+      document.getElementById(folderId).classList.add("folder");
+    }
+  }
+
+  function handleHoverOut(itemClass) {
+    var moduleName = itemClass.target.innerText;
+    if (moduleName.indexOf("Module") == -1) {
+      var folderKey = moduleName.substring(0, moduleName.indexOf("\n"));
+      document.getElementById(folderKey).classList.remove("folder");
+    } else {
+      var folderId = moduleName.replaceAll(" ", "");
+      document.getElementById(folderId).classList.remove("folder");
+    }
+  }
 
   return (
     <>
@@ -695,23 +720,34 @@ export default function UserDashboard() {
                     courses[0].format == undefined ? (
                       (openDetail == false ? setOpenDetail(true) : "",
                       courses.map((course, i) => (
-                        <div class="xl:w-1/5 md:w-1/3 p-4">
+                        <div
+                          class={` xl:w-1/5 md:w-1/3 p-4`}
+                          onMouseEnter={handleHover}
+                          onMouseLeave={handleHoverOut}
+                        >
                           {/* {console.log(allCourses)} */}
                           <div
-                            class="p-6 rounded-lg"
+                            class="p-6 rounded-lg cursor-pointer"
                             onClick={() => openFCourse(i)}
                           >
                             <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                              <FcFolder
-                                style={{ width: "5rem", height: "5rem" }}
-                              />
+                              {!enrolled && i != 0 ? (
+                                <img
+                                  src={lockedFolder}
+                                  id={`Module${i}`}
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              ) : (
+                                <img
+                                  src={enrolledFolder}
+                                  id={`Module${i}`}
+                                  style={{ width: "5rem", height: "5rem" }}
+                                />
+                              )}
                             </div>
                             <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
                               Module {i}
                             </h2>
-                            {/* <p class="leading-relaxed text-base">
-                          {course.data["name"]}
-                        </p> */}
                           </div>
                         </div>
                       )))
@@ -744,7 +780,8 @@ export default function UserDashboard() {
                                   style={{ width: "5rem", height: "5rem" }}
                                 />
                               ) : (
-                                <FcFolder
+                                <img
+                                  src={enrolledFolder}
                                   style={{ width: "5rem", height: "5rem" }}
                                 />
                               )}
@@ -752,9 +789,6 @@ export default function UserDashboard() {
                             <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
                               {course.name}
                             </h2>
-                            {/* <p class="leading-relaxed text-base">
-                            {course.data["name"]}
-                          </p> */}
                           </div>
                         </div>
                       ))
@@ -762,15 +796,19 @@ export default function UserDashboard() {
                   ) : (
                     (openDetail == true ? setOpenDetail(false) : "",
                     courses.map((course) => (
-                      <div class="xl:w-1/5 md:w-1/3 p-4">
+                      <div class="xl:w-1/5 md:w-1/3 p-4 cursor-pointer">
                         {/* {console.log(courses[0])} */}
                         <div
                           class="p-6 rounded-lg"
                           onClick={() => openCCourse(course.key)}
+                          onMouseEnter={handleHover}
+                          onMouseLeave={handleHoverOut}
                         >
                           <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                            <FcFolder
+                            <img
+                              src={enrolledFolder}
                               style={{ width: "5rem", height: "5rem" }}
+                              id={`${course.key}`}
                             />
                           </div>
                           <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
@@ -801,9 +839,10 @@ export default function UserDashboard() {
           className={`${
             openDetail ? (open == false ? "w-72" : "w-60") : "w-0"
           } flex flex-col h-screen`}
+          style={{ height: "158vh" }}
         >
           <div
-            style={{ backgroundColor: "#C490E4" }}
+            style={{ backgroundColor: "#C490E4", height: "158vh" }}
             className={` ${
               openDetail ? "translate-x-0" : "translate-x-full"
             } flex-col h-screen p-3 duration-300 absolute right-0`}

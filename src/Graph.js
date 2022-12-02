@@ -18,8 +18,9 @@ const buildData = ({ chartData }) => ({
     {
       label: "",
       borderColor: "#bae755",
-      borderDash: [5, 5],
-      backgroundColor: "#000000",
+
+      borderDash: [0, 0],
+      backgroundColor: "#55bae7",
       pointBackgroundColor: "#55bae7",
       pointBorderColor: "#55bae7",
       pointHoverBackgroundColor: "#55bae7",
@@ -27,6 +28,7 @@ const buildData = ({ chartData }) => ({
       data: chartData.data,
       fill: "start",
       tension: 0.4,
+      borderWidth: 5,
     },
   ],
 });
@@ -52,7 +54,7 @@ const Graph = ({ info }) => {
     <>
       <div
         className="rounded shadow-xl overflow-hidden w-full md:flex m-auto"
-        style={{ width: "650px", height: "400px" }}
+        style={{ width: "650px", height: "400px", background: "#FFF2F2" }}
       >
         <div className="flex w-full px-5 pb-4 bg-white-500 text-black items-center">
           <Line type="line" data={data} options={options} />
