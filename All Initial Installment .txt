@@ -8,4 +8,8 @@ npm i @mui/material
 npm i react-spinners
 npm i chart.js
 npm i react-chartjs-2
+npm i sass-loader@7.1.0
+npm i resolve-url-loader@3.0.0
+npm i webpack@4.22.0
+npm config set legacy-peer-deps true
 npm i @kunukn/react-collapse

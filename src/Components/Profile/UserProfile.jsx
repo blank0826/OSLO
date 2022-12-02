@@ -86,33 +86,33 @@ export default function UserProfile() {
       <section class="text-gray-600 body-font m-auto">
         <div class="container px-5 py-24 mx-auto">
           <div class="flex flex-wrap mx-auto my-auto">
-            <div class="lg:w-1/2 md:w-1/2 p-4 w-full">
+            <div class="lg:w-1/3 md:w-1/2 p-4 w-full">
               <CardProfile></CardProfile>
             </div>
-            <div class="lg:w-1/2 md:w-1/2 p-4 w-full">
+            <div class="lg:w-2/3 md:w-1/2 p-4 w-full">
               {studentData.length != 0 ? (
                 <>
                   <h2
-                    class="text-base title-font text-gray-500 tracking-widest mb-5"
+                    class="text-xl title-font text-gray-500 tracking-widest mb-5"
                     style={{ fontFamily: "Merriweather" }}
                   >
                     {studentData[0].branch}
                   </h2>
                   <h1
-                    class="text-gray-900 text-3xl title-font font-medium mb-5"
+                    class="text-gray-900 text-4xl title-font font-medium mb-5"
                     style={{ fontFamily: "Merriweather" }}
                   >
                     {studentData[0].name}
                   </h1>
                   <div class="flex mb-4">
                     <span
-                      class="title-font font-medium text-xl text-gray-900 w-25"
+                      class="title-font font-medium text-2xl text-gray-900 w-25"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       Roll Number:
                     </span>
                     <span
-                      class="title-font font-medium text-l text-gray-500"
+                      class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       &nbsp;&nbsp;&nbsp;{studentData[0].roll_number}
@@ -120,13 +120,13 @@ export default function UserProfile() {
                   </div>
                   <div class="flex mb-4">
                     <span
-                      class="title-font font-medium text-xl text-gray-900"
+                      class="title-font font-medium text-2xl text-gray-900"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       Email:
                     </span>
                     <span
-                      class="title-font font-medium text-l text-gray-500"
+                      class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       &nbsp;&nbsp;{" " + studentData[0].email}
@@ -134,13 +134,13 @@ export default function UserProfile() {
                   </div>
                   <div class="flex mb-4">
                     <span
-                      class="title-font font-medium text-xl text-gray-900"
+                      class="title-font font-medium text-2xl text-gray-900"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       Enrolled Courses:&nbsp;
                     </span>
                     <span
-                      class="title-font font-medium text-l text-gray-500"
+                      class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       {" " + studentData[0].courses}
@@ -148,13 +148,13 @@ export default function UserProfile() {
                   </div>
                   <div class="flex mb-4">
                     <span
-                      class="title-font font-medium text-xl text-gray-900"
+                      class="title-font font-medium text-2xl text-gray-900"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       LastLogin:&nbsp;&nbsp;
                     </span>
                     <span
-                      class="title-font font-medium text-l text-gray-500"
+                      class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
                       {" " + convertToDate(studentData[0].lastLogin)}
@@ -167,165 +167,21 @@ export default function UserProfile() {
             </div>
             <div class="lg:w-1/1 md:w-1/1 p-4 w-full">
               <div class="mt-4 text-center">
-                <h2 class="text-gray-900 title-font text-lg font-medium">
+                <h1 class="text-gray-900 title-font text-4xl font-medium">
                   ACTIVITY CHART
-                </h2>
+                </h1>
               </div>
               {chartData.length == 0 ? (
                 <div className="xl:w-1/2 md:w-1 p-4"></div>
               ) : (
                 <div className="p-4">
-                  <Graph
-                    info={chartData}
-                    // style={{ height: "400px", width: "400px" }}
-                  />
+                  <Graph info={chartData} />
                 </div>
               )}
             </div>
           </div>
         </div>
       </section>
-
-      {/* <section class="text-gray-600 body-font overflow-hidden">
-        <div class="container px-5 py-24 mx-auto">
-          <div class="lg:w-4/5 mx-auto flex flex-wrap">
-            <CardProfile></CardProfile>
-            {studentData.length != 0 ? (
-              <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                <h2 class="text-sm title-font text-gray-500 tracking-widest">
-                  {studentData[0].branch}
-                </h2>
-                <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
-                  {studentData[0].name}
-                </h1>
-                <div class="flex mb-4"></div>
-                <div class="flex items-center border-b-2 border-gray-100 mb-5"></div>
-                <div>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    Roll Number:
-                  </span>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "17px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    &nbsp;&nbsp;&nbsp;{studentData[0].roll_number}
-                  </span>
-                </div>
-                <div>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    Email:
-                  </span>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "17px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    &nbsp;&nbsp;&nbsp;{" " + studentData[0].email}
-                  </span>
-                </div>
-                <div>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    Enrolled Courses:
-                  </span>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "17px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    {" " + studentData[0].courses}
-                  </span>
-                </div>
-                <div>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    LastLogin:
-                  </span>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "17px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    {" " + convertToDate(studentData[0].lastLogin)}
-                  </span>
-                </div>
-                <div>
-                  <span
-                    className="tracking-wider font-bold"
-                    style={{
-                      color: "black",
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      fontFamily: "Merriweather",
-                    }}
-                  >
-                    Activity Graph
-                  </span>
-                  {chartData.length == 0 ? (
-                    <div className="xl:w-1/2 md:w-1 p-4"></div>
-                  ) : (
-                    <div className="p-4">
-                      <Graph
-                        info={chartData}
-                        style={{ height: "400px", width: "400px" }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <h1>Fetching</h1>
-            )}
-          </div>
-        </div>
-      </section> */}
     </>
   );
 }
