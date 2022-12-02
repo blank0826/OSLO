@@ -19,7 +19,7 @@ const buildData = ({ chartData }) => ({
       label: "",
       borderColor: "#bae755",
       borderDash: [5, 5],
-      backgroundColor: "#e755ba",
+      backgroundColor: "#000000",
       pointBackgroundColor: "#55bae7",
       pointBorderColor: "#55bae7",
       pointHoverBackgroundColor: "#55bae7",

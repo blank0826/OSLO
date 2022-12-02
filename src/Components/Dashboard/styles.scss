@@ -55,6 +55,22 @@
   }
   
   .btnCol{
+    position: relative;
+    letter-spacing: 1px;
+    margin: 20px;
+    font-size: 18px;
+    padding: 10px;
+    text-align: center;
+    transition: 0.5s;
+    border-radius: 10px;
+    cursor: pointer;
+    border-radius: 25px;
+    border: none;
+    background: #64d488;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 180px;
     transition: color 280ms;
   }
 

@@ -23,7 +23,7 @@ function reducer(state, { type, index }) {
 
 function Block({ isOpen, title, onToggle, children }) {
   return (
-    <div className="blockQuery">
+    <div className="blockQuery" style={{ fontFamily: "Merriweather" }}>
       <button className="btnQuery toggleQuery" onClick={onToggle}>
         <span>{title}</span>
         <Down isOpen={isOpen} />
@@ -53,18 +53,34 @@ export default function UserQuery({ allCourses }) {
       let arr = [];
       for (var i = 0; i < allCourses.length; i++) {
         var course = allCourses[i].key;
+        var title = allCourses[i].data.name;
+
         console.log(course);
         let contentArr = [];
         for (var j = 0; j < allCourses[i].data.query?.length; j++) {
           var query = allCourses[i].data.query[j];
           if (query.email == email) {
-            contentArr.push(query.content);
+            var timeStamp = query.date;
+            console.log(query);
+            var d = new Date(timeStamp);
+            var date =
+              d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+            var time =
+              (("" + d.getHours()).length == 1
+                ? "0" + d.getHours()
+                : d.getHours()) +
+              ":" +
+              (("" + d.getMinutes()).length == 1
+                ? "0" + d.getMinutes()
+                : d.getMinutes());
+            contentArr.push(query.content + " - " + date + " - " + time);
           }
         }
 
         if (contentArr.length != 0) {
           let obj = {
             key: course,
+            title: title,
             content: contentArr,
           };
 
@@ -85,14 +101,14 @@ export default function UserQuery({ allCourses }) {
             onClick={() => dispatch({ type: "expand-all" })}
             disabled={state.every((s) => s === true)}
           >
-            Expand all
+            Expand All
           </button>
           <button
             className="btnCol"
             onClick={() => dispatch({ type: "collapse-all" })}
             disabled={state.every((s) => s === false)}
           >
-            Collapse all
+            Collapse All
           </button>
         </header>
 
@@ -100,11 +116,11 @@ export default function UserQuery({ allCourses }) {
           showArr.map((course, i) => {
             return (
               <Block
-                title={course.key}
+                title={course.key + " - " + course.title}
                 isOpen={state[i]}
                 onToggle={() => dispatch({ type: "toggle", index: i })}
               >
-                <div className="contentQuery">
+                <div className="contentQuery" style={{ fontWeight: "lighter" }}>
                   {console.log(course.content)}
                   {course.content.map((content, j) => {
                     return (

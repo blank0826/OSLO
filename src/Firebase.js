@@ -24,6 +24,7 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
+import { BsArrowReturnLeft } from "react-icons/bs";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
@@ -105,6 +106,7 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
         // if (val.email == email && val.password == password) {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
+            const fromLogOut = localStorage.getItem("ComingFromLogoutUser");
             console.log(email);
             console.log(password);
             console.log(auth.currentUser.accessToken);
@@ -129,8 +131,11 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
               // localStorage.setItem("Bearer", auth.currentUser.accessToken);
               // localStorage.setItem("OrphanageId", id);
               countUserActivity = 1;
-              window.alert("Signed in!");
-              navigate("/DashboardUser");
+              if (fromLogOut == undefined || fromLogOut == null) {
+                console.log(fromLogOut);
+                window.alert("Signed in!");
+                navigate("/DashboardUser");
+              }
             }
           })
           .catch((error) => {
@@ -406,7 +411,7 @@ const LogoutStudent = (navigate) => {
       window.alert(error.message);
     });
   }
-
+  localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
   window.alert("Signed out!");
   signOut(auth);
   navigate("/LoginUser");
@@ -438,30 +443,11 @@ const updateUserDetails = (uid) => {
 
   console.log(updates);
 
-  // arr.activity[date] = {
-  //   work:
-  //     ,
-  // };
+  update(ref(db), updates).then(() => {
+    return "Successful!";
+  });
 
-  // arr.lastLogin = new Date().getTime();
-
-  // console.log(arr.activity);
-  // console.log(arr.lastLogin);
-  // let obj = {
-  //   activity: arr.activity,
-  //   branch: arr.branch,
-  //   courses: arr.courses,
-  //   email: arr.email,
-  //   lastLogin: arr.lastLogin,
-  //   name: arr.name,
-  //   roll_number: arr.roll_number,
-  // };
-
-  // console.log(obj);
-
-  update(ref(db), updates);
-
-  return;
+  return "Successful!";
 };
 
 function fetchCourses() {
@@ -566,8 +552,19 @@ const uploadQuery = (locationCourse, queryContent) => {
     console.log(index);
   });
 
+  const pathRef2 = ref(db, "students/" + auth.currentUser.uid);
+  let email = "";
+
+  onValue(pathRef2, (snapshot) => {
+    email = snapshot.val().email;
+  });
+
+  const date = new Date().getTime();
+
   set(ref(db, "courses/" + locationCourse + "/query/" + index), {
+    date: date,
     content: queryContent,
+    email: email,
   });
 };
 

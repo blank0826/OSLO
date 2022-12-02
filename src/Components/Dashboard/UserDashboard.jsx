@@ -33,6 +33,7 @@ import {
   accessUserName,
 } from "../../Firebase";
 
+import AnimationVideo from "../../images/AnimationVideo.mp4";
 import logo from "../../images/logo.png";
 import Select from "react-select";
 import Button from "@mui/material/Button";
@@ -63,7 +64,7 @@ export default function UserDashboard() {
   const [backDisplay, setBackDisplay] = useState(false);
   const [profileDisplay, setProfileDisplay] = useState(false);
   const [showQueries, setShowQueries] = useState(false);
-
+  const [animLoading, setAnimLoading] = useState(false);
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#C490E4");
 
@@ -80,36 +81,36 @@ export default function UserDashboard() {
 
     document.body.classList.add("overflow-x-hidden");
 
-    console.log(courses);
-    console.log("!");
+    // console.log(courses);
+    // console.log("!");
     if (courses.length == 0) {
       let val = [];
       let arr = fetchCourses();
       val = val.concat(arr);
       setCourses(val);
       setAllCourses(val);
-      console.log("2");
+      // console.log("2");
     } else {
       if (enrollCourses.length == 0) {
         let val = [];
         let arr = accessUser();
         val = val.concat(arr);
         setEnrollCourses(val);
-        console.log("3");
+        // console.log("3");
       }
-      console.log("4");
+      // console.log("4");
     }
 
     if (allTags.length == 0) {
-      console.log("5");
+      // console.log("5");
       let val = [];
       let arr = fetchDept();
       val = val.concat(arr);
-      console.log(val);
+      // console.log(val);
       let val2 = [];
       let arr2 = fetchTags();
       val2 = val2.concat(arr2);
-      console.log(val2);
+      // console.log(val2);
 
       if (val.length != 0 && val2.length != 0) {
         const groupedOptions = [
@@ -126,7 +127,7 @@ export default function UserDashboard() {
         setAllTags(groupedOptions);
       }
     }
-    console.log(courses);
+    // console.log(courses);
   }, [courses, enrollCourses]);
 
   function componentDidUpdate() {
@@ -545,7 +546,7 @@ export default function UserDashboard() {
                         setProfileDisplay(true);
                         setOpenDetail(false);
                         setBackDisplay(false);
-                        showQueries(false);
+                        setShowQueries(false);
                         setQueryVisibility(false);
                       }}
                     >
@@ -573,7 +574,7 @@ export default function UserDashboard() {
                         setQueryVisibility(false);
                         setBackDisplay(false);
                         setLocation("");
-                        // setOpenedCourseData("");
+                        setOpenDetail(false);
                         setShowQueries(true);
                         setProfileDisplay(false);
                       }}
@@ -583,7 +584,7 @@ export default function UserDashboard() {
                         className="text-gray-100"
                         style={{
                           fontSize: "17px",
-                          color: "#FCE2DB",
+                          color: "#F7E8F6",
                           fontWeight: "700",
                           fontFamily: "Merriweather",
                         }}
@@ -688,7 +689,7 @@ export default function UserDashboard() {
                 {showQueries ? (
                   <UserQuery allCourses={allCourses}></UserQuery>
                 ) : profileDisplay ? (
-                  <UserProfile></UserProfile>
+                  <UserProfile>{console.log(profileDisplay)}</UserProfile>
                 ) : courses.length != 0 ? (
                   courses[0].key == undefined ? (
                     courses[0].format == undefined ? (
