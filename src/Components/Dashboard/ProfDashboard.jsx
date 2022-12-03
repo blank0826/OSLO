@@ -24,15 +24,18 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { CMultiSelect } from "@coreui/react-pro";
 import lockedFolder from "../../images/lock.png";
 import enrolledFolder from "../../images/open-folder.png";
+import { Controller, useForm } from "react-hook-form";
+
 import {
   LogoutProf,
   fetchCourses,
-  accessUser,
+  accessProf,
   getURL,
   uploadQuery,
   fetchTags,
   fetchDept,
   accessUserName,
+  addVStudent,
 } from "../../Firebase";
 
 import logo from "../../images/logo.png";
@@ -55,18 +58,20 @@ export default function ProfDashboard() {
   const [openDetail, setOpenDetail] = useState(false);
   const [openedCourseData, setOpenedCourseData] = useState("");
   const [allTags, setAllTags] = useState([]);
-  // const [enrolled, setEnrolled] = useState(false);
-  const [enrollCourses, setEnrollCourses] = useState([]);
+  const [rollNumber, setRollNumber] = useState("");
+  const [taughtCourses, setTaughtCourses] = useState([]);
+  const [taughtCoursesSelect, setTaughtCoursesSelect] = useState([]);
   const [courseSearch, setCourseSearch] = useState("");
   const [queryVisibility, setQueryVisibility] = useState(false);
-  const [openQueryDialog, setQueryDialog] = useState(false);
+  const [openVirtualDialog, setVirtualDialog] = useState(false);
   const [query, setQuery] = useState("");
   const [backDisplay, setBackDisplay] = useState(false);
   const [profileDisplay, setProfileDisplay] = useState(false);
   const [showQueries, setShowQueries] = useState(false);
-  const [animLoading, setAnimLoading] = useState(false);
+  const [selectedVirtualCourse, setSelectedVirtualCourse] = useState(false);
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#C490E4");
+  const { register, handleSubmit, errors, control } = useForm();
 
   const override = {
     display: "block",
@@ -88,11 +93,20 @@ export default function ProfDashboard() {
       setCourses(val);
       setAllCourses(val);
     } else {
-      if (enrollCourses.length == 0) {
+      if (taughtCourses.length == 0) {
         let val = [];
-        let arr = accessUser();
+        let arr = accessProf();
         val = val.concat(arr);
-        setEnrollCourses(val);
+        setTaughtCourses(val);
+        let taughtCSelect = [];
+        val.map((courses) => {
+          taughtCSelect.push({
+            value: courses.key,
+            label: courses.key,
+            isFixed: true,
+          });
+        });
+        setTaughtCoursesSelect(taughtCSelect);
       }
     }
 
@@ -119,7 +133,7 @@ export default function ProfDashboard() {
         setAllTags(groupedOptions);
       }
     }
-  }, [courses, enrollCourses]);
+  }, [courses, taughtCourses]);
 
   function componentDidUpdate() {
     window.history.pushState(null, document.title, window.location.href);
@@ -128,14 +142,18 @@ export default function ProfDashboard() {
     });
   }
 
-  // const handleClickOpen = () => {
-  //   setQueryDialog(true);
-  // };
+  const handleClickOpen = () => {
+    setVirtualDialog(true);
+  };
 
-  // const handleClose = () => {
-  //   setQueryDialog(false);
-  //   setQuery("");
-  // };
+  const handleClose = () => {
+    setVirtualDialog(false);
+    setQuery("");
+  };
+
+  const handleVirtualCourse = (selectedCourse) => {
+    setSelectedVirtualCourse(selectedCourse);
+  };
 
   const handleChange = (selectedOptions) => {
     var arr = [];
@@ -213,26 +231,9 @@ export default function ProfDashboard() {
     setCourses(arr);
   };
 
-  //update this one to get taught courses
-  function getNames(enrollCourses) {
-    let newArr = [];
-    console.log(courses);
-    console.log(enrollCourses);
-    courses.map((course) => {
-      if (enrolledCourses.includes(course.key)) {
-        const childData = course.data;
-        const childKey = course.key;
-        newArr.push({ key: childKey, data: childData });
-      }
-    });
-
-    setCourses(newArr);
+  function getTaughtCourses() {
+    setCourses(taughtCourses);
   }
-
-  //change name for this one
-  const enrolledCourses = () => {
-    getNames(enrollCourses);
-  };
 
   const searchCourses = () => {
     if (courseSearch == "") {
@@ -321,11 +322,34 @@ export default function ProfDashboard() {
     }
   }
 
+  function addVirtualStudent() {
+    console.log(selectedVirtualCourse.label);
+    console.log(rollNumber);
+    if (selectedVirtualCourse == "") {
+      window.alert("Kindly Add Course for the Student to be enrolled in!");
+      return;
+    }
+    if (rollNumber == "") {
+      window.alert("Kindly Add Roll Number of the Student");
+      return;
+    }
+
+    addVStudent(rollNumber, selectedVirtualCourse.label);
+
+    setRollNumber("");
+    setSelectedVirtualCourse("");
+    setVirtualDialog(false);
+  }
+
   return (
     <>
       <header
         class="py-6 bg-gray-700 text-white text-center flex justify-around"
-        style={{ height: "12vh", backgroundColor: "#FCE2DB" }}
+        style={{
+          height: "12vh",
+          backgroundColor: "#FCE2DB",
+          alignItems: "center",
+        }}
       >
         <h1
           className="text-2xl tracking-wider"
@@ -357,30 +381,47 @@ export default function ProfDashboard() {
         >
           Creators
         </h1>
-        {/* <Dialog open={openQueryDialog} onClose={handleClose}>
-          <DialogTitle>Raise a Query</DialogTitle>
+        <Dialog
+          className="virtualStudentDialog"
+          open={openVirtualDialog}
+          onClose={handleClose}
+        >
+          <DialogTitle>Add a virtual student</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Your queries will be directly viewed by the professors of the
-              respective course.
+            <DialogContentText mb={2}>
+              The added student will not be graded but they will be able to see
+              the complete contents of the course.
             </DialogContentText>
+            <Select
+              required
+              name="tags"
+              options={taughtCoursesSelect}
+              className="basic-multi-select bg-purple-300 text-gray-800"
+              classNamePrefix="mySelect"
+              onChange={handleVirtualCourse}
+              placeholder="Course"
+            />
             <TextField
+              sx={{
+                width: "98%",
+                marginLeft: "0.5rem",
+              }}
               autoFocus
               margin="dense"
               id="name"
-              label="Query"
-              type="text"
+              label="Roll Number"
+              type="number"
               fullWidth
               variant="standard"
-              onChange={(e) => setQuery(e.target.value)}
-              value={query}
+              onChange={(e) => setRollNumber(e.target.value)}
+              value={rollNumber}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Close</Button>
-            <Button onClick={submitQuery}>Submit</Button>
+            <Button onClick={addVirtualStudent}>Add</Button>
           </DialogActions>
-        </Dialog> */}
+        </Dialog>
       </header>
       <div className="flex flex-row">
         <div
@@ -488,7 +529,6 @@ export default function ProfDashboard() {
                       setQueryVisibility(false);
                       setBackDisplay(false);
                       setProfileDisplay(false);
-                      // setOpenedCourseData("");
                       setShowQueries(false);
                       setLocation("");
                       setCourses(fetchCourses);
@@ -519,7 +559,7 @@ export default function ProfDashboard() {
                       // setOpenedCourseData("");
                       setShowQueries(false);
                       setProfileDisplay(false);
-                      enrolledCourses();
+                      getTaughtCourses();
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -533,7 +573,35 @@ export default function ProfDashboard() {
                           fontFamily: "Merriweather",
                         }}
                       >
-                        Enrolled In
+                        Courses Taught
+                      </span>
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-sm"
+                    style={{ marginBottom: "1.25rem" }}
+                    onClick={() => {
+                      setQueryVisibility(false);
+                      setBackDisplay(false);
+                      setLocation("");
+                      // setOpenedCourseData("");
+                      setShowQueries(false);
+                      setProfileDisplay(false);
+                    }}
+                  >
+                    <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
+                      <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <span
+                        className="text-gray-100 tracking-wider"
+                        style={{
+                          fontSize: "17px",
+                          color: "#ffffff",
+                          fontWeight: "700",
+                          fontFamily: "Merriweather",
+                        }}
+                        onClick={handleClickOpen}
+                      >
+                        Add Virtual Student
                       </span>
                     </div>
                   </li>
@@ -635,7 +703,10 @@ export default function ProfDashboard() {
           </div>
         </div>
         <div className="container">
-          <section class="text-gray-600 body-font">
+          <section
+            class="text-gray-600 body-font"
+            style={{ marginLeft: "2rem" }}
+          >
             <div
               style={{
                 justifyContent: "space-between",
@@ -832,12 +903,6 @@ export default function ProfDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={() => {
-                      setQueryVisibility(false);
-                      setBackDisplay(false);
-                      setLocation("");
-                      setCourses(fetchCourses);
-                    }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <FaChalkboardTeacher
@@ -875,12 +940,6 @@ export default function ProfDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={() => {
-                      setQueryVisibility(false);
-                      setBackDisplay(false);
-                      setLocation("");
-                      enrolledCourses();
-                    }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <HiOutlineOfficeBuilding
@@ -918,12 +977,6 @@ export default function ProfDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={() => {
-                      setQueryVisibility(false);
-                      setBackDisplay(false);
-                      setLocation("");
-                      enrolledCourses();
-                    }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <BiTimeFive
@@ -961,12 +1014,6 @@ export default function ProfDashboard() {
                   <li
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
-                    onClick={() => {
-                      setQueryVisibility(false);
-                      setBackDisplay(false);
-                      setLocation("");
-                      enrolledCourses();
-                    }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">
                       <BsInfoCircle

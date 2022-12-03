@@ -431,7 +431,7 @@ const LogoutProf = (navigate) => {
   // localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
   window.alert("Signed out!");
   signOut(auth);
-  navigate("/LoginUser");
+  navigate("/LoginProf");
   localStorage.removeItem("Bearer");
 };
 
@@ -640,6 +640,71 @@ const fetchEmailID = () => {
   return email;
 };
 
+const accessProf = () => {
+  var uid = auth.currentUser["uid"];
+  let array = [];
+  let name = "";
+
+  console.log(uid);
+
+  var profRef = ref(db, "professors/" + uid);
+  onValue(profRef, (snapshot) => {
+    name = snapshot.val().name;
+  });
+
+  var courseRef = ref(db, "courses/");
+  onValue(courseRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      console.log(childSnapshot.val().faculty);
+      console.log(name);
+      if (childSnapshot.val().faculty == name) {
+        const childData = childSnapshot.val();
+        const childKey = childSnapshot.key;
+        array.push({ key: childKey, data: childData });
+      }
+    });
+  });
+  console.log(array);
+  return array;
+};
+
+const addVStudent = (rollNumber, course) => {
+  const studentData = query(
+    ref(db, "students"),
+    orderByChild("roll_number"),
+    equalTo(rollNumber)
+  );
+  let value = "";
+  let uid = "";
+  onValue(studentData, (snapshot) => {
+    const data = snapshot.val();
+    if (data == null) {
+      window.alert("Student does not exist!");
+      return;
+    } else {
+      uid = Object.keys(data)[0];
+    }
+    snapshot.forEach((childSnapshot) => {
+      // console.log(childSnapshot.uid);
+      value = childSnapshot.val().courses;
+    });
+  });
+
+  let courseEnr = "";
+  console.log(value);
+  console.log(course);
+  console.log(value.indexOf(course));
+  if (value.indexOf(course) == -1) {
+    courseEnr = value + ", " + course;
+    const updates = {};
+    updates["/students/" + uid + "/courses"] = courseEnr;
+    update(ref(db), updates);
+    window.alert("Student Enrolled Successfully!"); 
+  } else {
+    window.alert("Student is already enrolled in this course!");
+  }
+};
+
 export {
   HandleLoginFirebaseUser,
   HandleSignupUser,
@@ -660,4 +725,6 @@ export {
   accessUserName,
   fetchEmailID,
   LogoutProf,
+  accessProf,
+  addVStudent,
 };
