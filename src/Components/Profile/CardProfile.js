@@ -1,7 +1,12 @@
 import { React, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
-import { uploadUserPhoto, getPhotoUrl } from "../../Firebase";
+import {
+  uploadUserPhoto,
+  uploadProfPhoto,
+  getPhotoUrl,
+  getPhotoUrlProf,
+} from "../../Firebase";
 // const ImgUpload = ({ onChange, src }) => (
 
 // );
@@ -13,8 +18,15 @@ export default function CardProfile() {
   useEffect(() => {
     // console.log(imageUrl);
     if (imageUrl == undefined || imageUrl.length == 0) {
-      var url = getPhotoUrl();
-      //   console.log(url);
+      var person = localStorage.getItem("loggedInAs");
+      var url = "";
+
+      if (person == "User") {
+        url = getPhotoUrl();
+      } else {
+        url = getPhotoUrlProf();
+      }
+
       if (url == undefined) {
         setImageUrl("");
       } else {
@@ -40,7 +52,13 @@ export default function CardProfile() {
   };
 
   const uploadPhoto = (e) => {
-    uploadUserPhoto(file);
+    var person = localStorage.getItem("loggedInAs");
+    if (person == "User") {
+      uploadUserPhoto(file);
+    } else {
+      uploadProfPhoto(file);
+    }
+    // uploadUserPhoto(file);
   };
 
   return (

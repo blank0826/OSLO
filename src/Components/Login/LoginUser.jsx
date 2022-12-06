@@ -18,6 +18,7 @@ export default function LoginUser() {
   const handleUserLogin = (e) => {
     e.preventDefault();
     console.log(email + " " + password);
+    localStorage.setItem("loggedInAs", "User");
     localStorage.removeItem("ComingFromLogoutUser");
     HandleLoginFirebaseUser(navigate, email, password, isChecked);
     setEmail("");

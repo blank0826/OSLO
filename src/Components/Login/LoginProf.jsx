@@ -12,6 +12,7 @@ export default function LoginUser() {
 
   const handleProfLogin = (e) => {
     e.preventDefault();
+    localStorage.setItem("loggedInAs", "Prof");
     HandleLoginFirebaseProf(navigate, email, password, isChecked);
     setEmail("");
     setPassword("");

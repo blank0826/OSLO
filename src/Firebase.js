@@ -411,6 +411,7 @@ const LogoutStudent = (navigate) => {
       window.alert(error.message);
     });
   }
+  localStorage.removeItem("loggedInAs");
   localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
   window.alert("Signed out!");
   signOut(auth);
@@ -428,6 +429,8 @@ const LogoutProf = (navigate) => {
       window.alert(error.message);
     });
   }
+
+  localStorage.removeItem("loggedInAs");
   // localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
   window.alert("Signed out!");
   signOut(auth);
@@ -596,9 +599,32 @@ const getStudentData = () => {
   return array;
 };
 
+const getProfData = () => {
+  var uid = auth.currentUser["uid"];
+  let array = [];
+  var profRef = ref(db, "professors/" + uid);
+  onValue(profRef, (snapshot) => {
+    var data = snapshot.val();
+    array = array.concat(data);
+  });
+  return array;
+};
+
 const getPhotoUrl = () => {
   let url = "";
   var userRef = ref(db, "students/" + auth.currentUser.uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    console.log(data);
+    url = data.photoURL;
+  });
+  // console.log(url);
+  return url;
+};
+
+const getPhotoUrlProf = () => {
+  let url = "";
+  var userRef = ref(db, "professors/" + auth.currentUser.uid);
   onValue(userRef, (snapshot) => {
     var data = snapshot.val();
     console.log(data);
@@ -629,6 +655,35 @@ const uploadUserPhoto = (file) => {
   );
 };
 
+const uploadProfPhoto = (file) => {
+  console.log(file);
+  console.log(auth.currentUser.uid);
+  const pathReference = sRef(storage, auth.currentUser.uid + "/" + file.name);
+  console.log(file);
+  console.log(auth.currentUser.uid);
+  const uploadTask = uploadBytesResumable(pathReference, file);
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {},
+    (error) => {
+      console.log(file);
+      console.log(auth.currentUser.uid);
+      alert(error);
+    },
+    () => {
+      console.log(file);
+      console.log(auth.currentUser.uid);
+      window.alert("Uploaded Successfully!");
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        const updates = {};
+        updates["/professors/" + auth.currentUser.uid + "/photoURL"] =
+          downloadURL;
+        update(ref(db), updates);
+      });
+    }
+  );
+};
+
 const fetchEmailID = () => {
   let email = "";
   var userRef = ref(db, "students/" + auth.currentUser.uid);
@@ -640,24 +695,35 @@ const fetchEmailID = () => {
   return email;
 };
 
+const fetchEmailIDProf = () => {
+  let email = "";
+  var userRef = ref(db, "professors/" + auth.currentUser.uid);
+  onValue(userRef, (snapshot) => {
+    var data = snapshot.val();
+    email = data.email;
+  });
+  console.log(email);
+  return email;
+};
+
 const accessProf = () => {
   var uid = auth.currentUser["uid"];
   let array = [];
-  let name = "";
+  let email = "";
 
   console.log(uid);
 
   var profRef = ref(db, "professors/" + uid);
   onValue(profRef, (snapshot) => {
-    name = snapshot.val().name;
+    email = snapshot.val().email;
   });
 
   var courseRef = ref(db, "courses/");
   onValue(courseRef, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
       console.log(childSnapshot.val().faculty);
-      console.log(name);
-      if (childSnapshot.val().faculty == name) {
+      console.log(email);
+      if (childSnapshot.val().emailFaculty == email) {
         const childData = childSnapshot.val();
         const childKey = childSnapshot.key;
         array.push({ key: childKey, data: childData });
@@ -669,6 +735,8 @@ const accessProf = () => {
 };
 
 const addVStudent = (rollNumber, course) => {
+  console.log(rollNumber);
+  console.log(course);
   const studentData = query(
     ref(db, "students"),
     orderByChild("roll_number"),
@@ -690,6 +758,8 @@ const addVStudent = (rollNumber, course) => {
     });
   });
 
+  console.log(uid);
+
   let courseEnr = "";
   console.log(value);
   console.log(course);
@@ -699,10 +769,16 @@ const addVStudent = (rollNumber, course) => {
     const updates = {};
     updates["/students/" + uid + "/courses"] = courseEnr;
     update(ref(db), updates);
-    window.alert("Student Enrolled Successfully!"); 
+    window.alert("Student Enrolled Successfully!");
   } else {
     window.alert("Student is already enrolled in this course!");
   }
+};
+
+const updateReadFirebase = (courseKey, read) => {
+  const updates = {};
+  updates["/courses/" + courseKey + "/queryRead"] = read;
+  update(ref(db), updates);
 };
 
 export {
@@ -727,4 +803,9 @@ export {
   LogoutProf,
   accessProf,
   addVStudent,
+  getProfData,
+  getPhotoUrlProf,
+  uploadProfPhoto,
+  fetchEmailIDProf,
+  updateReadFirebase,
 };

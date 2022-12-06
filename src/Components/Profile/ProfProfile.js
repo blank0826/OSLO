@@ -1,20 +1,20 @@
 import { React, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HandleSignupUser, getStudentData } from "../../Firebase";
+import { HandleSignupUser, getProfData } from "../../Firebase";
 import logo from "../../images/logo.png";
 import CardProfile from "./CardProfile";
 import Graph from "../../Graph";
-import { ActionCodeURL } from "firebase/auth";
 
-export default function UserProfile() {
-  const [studentData, setStudentData] = useState([]);
+export default function ProfProfile({ taughtCourses }) {
+  const [profData, setProfData] = useState([]);
   const [chartData, setChartData] = useState([]);
 
   let chart_data = [];
   useEffect(() => {
-    if (studentData.length == 0) {
-      console.log(studentData);
-      setStudentData(getStudentData());
+    if (profData.length == 0) {
+      console.log(profData);
+      console.log(taughtCourses);
+      setProfData(getProfData());
     } else {
       var arr = Array.from(Array(7).keys()).map((idx) => {
         const d = new Date();
@@ -30,7 +30,7 @@ export default function UserProfile() {
         var date =
           d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
 
-        var act = studentData[0].activity[date];
+        var act = profData[0].activity[date];
 
         if (act != undefined) {
           return act.work;
@@ -41,7 +41,7 @@ export default function UserProfile() {
 
       console.log(values);
 
-      console.log(studentData);
+      console.log(taughtCourses);
 
       chart_data = {
         chartData: {
@@ -52,7 +52,7 @@ export default function UserProfile() {
 
       setChartData(chart_data);
     }
-  }, [studentData]);
+  }, [profData]);
 
   const convertToDate = (timeStamp) => {
     var time = parseInt(timeStamp);
@@ -87,32 +87,32 @@ export default function UserProfile() {
               <CardProfile></CardProfile>
             </div>
             <div class="lg:w-2/3 md:w-1/2 p-4 w-full">
-              {studentData.length != 0 ? (
+              {profData.length != 0 ? (
                 <>
                   <h2
                     class="text-xl title-font text-gray-500 tracking-widest mb-5"
                     style={{ fontFamily: "Merriweather" }}
                   >
-                    {studentData[0].branch}
+                    {taughtCourses[0].data.dept}
                   </h2>
                   <h1
                     class="text-gray-900 text-4xl title-font font-medium mb-5"
                     style={{ fontFamily: "Merriweather" }}
                   >
-                    {studentData[0].name}
+                    {profData[0].name}
                   </h1>
                   <div class="flex mb-4">
                     <span
                       class="title-font font-medium text-2xl text-gray-900 w-25"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      Roll Number:
+                      Contact Number:
                     </span>
                     <span
                       class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      &nbsp;&nbsp;&nbsp;{studentData[0].roll_number}
+                      &nbsp;&nbsp;&nbsp;{profData[0].contact_number}
                     </span>
                   </div>
                   <div class="flex mb-4">
@@ -126,7 +126,7 @@ export default function UserProfile() {
                       class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      &nbsp;&nbsp;{" " + studentData[0].email}
+                      &nbsp;&nbsp;{" " + profData[0].email}
                     </span>
                   </div>
                   <div class="flex mb-4">
@@ -134,13 +134,49 @@ export default function UserProfile() {
                       class="title-font font-medium text-2xl text-gray-900"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      Enrolled Courses:&nbsp;
+                      Office:
                     </span>
                     <span
                       class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      {" " + studentData[0].courses}
+                      &nbsp;&nbsp;{" " + taughtCourses[0].data.office}
+                    </span>
+                  </div>
+                  <div class="flex mb-4">
+                    <span
+                      class="title-font font-medium text-2xl text-gray-900"
+                      style={{ fontFamily: "Merriweather" }}
+                    >
+                      Office Timing:
+                    </span>
+                    <span
+                      class="title-font font-medium text-xl text-gray-500"
+                      style={{ fontFamily: "Merriweather" }}
+                    >
+                      &nbsp;&nbsp;{" " + taughtCourses[0].data.officeTiming}
+                    </span>
+                  </div>
+                  <div class="flex mb-4">
+                    <span
+                      class="title-font font-medium text-2xl text-gray-900"
+                      style={{ fontFamily: "Merriweather" }}
+                    >
+                      Courses Taught:&nbsp;
+                    </span>
+                    <span
+                      class="title-font font-medium text-xl text-gray-500"
+                      style={{ fontFamily: "Merriweather" }}
+                    >
+                      {taughtCourses.map((tCourses, i) => (
+                        <span
+                          class="title-font font-medium text-xl text-gray-500"
+                          style={{ fontFamily: "Merriweather" }}
+                        >
+                          {tCourses.key}
+                          {i == taughtCourses.length - 1 ? "" : ", "}
+                        </span>
+                      ))}
                     </span>
                   </div>
                   <div class="flex mb-4">
@@ -154,7 +190,7 @@ export default function UserProfile() {
                       class="title-font font-medium text-xl text-gray-500"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      {" " + convertToDate(studentData[0].lastLogin)}
+                      {" " + convertToDate(profData[0].lastLogin)}
                     </span>
                   </div>
                 </>

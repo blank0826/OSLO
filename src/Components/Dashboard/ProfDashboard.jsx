@@ -25,7 +25,8 @@ import { CMultiSelect } from "@coreui/react-pro";
 import lockedFolder from "../../images/lock.png";
 import enrolledFolder from "../../images/open-folder.png";
 import { Controller, useForm } from "react-hook-form";
-
+import ProfProfile from "../Profile/ProfProfile";
+import ProfQuery from "./ProfQuery";
 import {
   LogoutProf,
   fetchCourses,
@@ -102,7 +103,7 @@ export default function ProfDashboard() {
         val.map((courses) => {
           taughtCSelect.push({
             value: courses.key,
-            label: courses.key,
+            label: courses.key + " - " + courses.data.name,
             isFixed: true,
           });
         });
@@ -323,18 +324,18 @@ export default function ProfDashboard() {
   }
 
   function addVirtualStudent() {
-    console.log(selectedVirtualCourse.label);
+    console.log(selectedVirtualCourse.value);
     console.log(rollNumber);
     if (selectedVirtualCourse == "") {
-      window.alert("Kindly Add Course for the Student to be enrolled in!");
+      window.alert("Kindly add course for the student to be enrolled in!");
       return;
     }
     if (rollNumber == "") {
-      window.alert("Kindly Add Roll Number of the Student");
+      window.alert("Kindly add roll number of the student");
       return;
     }
 
-    addVStudent(rollNumber, selectedVirtualCourse.label);
+    addVStudent(rollNumber, selectedVirtualCourse.value);
 
     setRollNumber("");
     setSelectedVirtualCourse("");
@@ -581,12 +582,12 @@ export default function ProfDashboard() {
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                     onClick={() => {
-                      setQueryVisibility(false);
-                      setBackDisplay(false);
-                      setLocation("");
-                      // setOpenedCourseData("");
-                      setShowQueries(false);
-                      setProfileDisplay(false);
+                      // setQueryVisibility(false);
+                      // setBackDisplay(false);
+                      // setLocation("");
+                      // // setOpenedCourseData("");
+                      // setShowQueries(false);
+                      // setProfileDisplay(false);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -635,6 +636,7 @@ export default function ProfDashboard() {
                   </li>
                   <li
                     className="rounded-sm"
+                    queries
                     style={{ marginBottom: "1.25rem" }}
                   >
                     <div
@@ -658,7 +660,7 @@ export default function ProfDashboard() {
                           fontFamily: "Merriweather",
                         }}
                       >
-                        My Queries
+                        Queries
                       </span>
                     </div>
                   </li>
@@ -762,9 +764,11 @@ export default function ProfDashboard() {
             <div class="container px-5 py-4 mx-auto">
               <div class="flex flex-wrap -m-4">
                 {showQueries ? (
-                  <UserQuery allCourses={allCourses}></UserQuery>
+                  <ProfQuery allCourses={allCourses}></ProfQuery>
                 ) : profileDisplay ? (
-                  <UserProfile>{console.log(profileDisplay)}</UserProfile>
+                  <ProfProfile taughtCourses={taughtCourses}>
+                    {console.log(profileDisplay)}
+                  </ProfProfile>
                 ) : courses.length != 0 ? (
                   courses[0].key == undefined ? (
                     courses[0].format == undefined ? (
