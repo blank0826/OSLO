@@ -30,36 +30,42 @@ export default function ForgotPassword() {
           alignItems: "center",
         }}
       >
-        <h1
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/About"
+          target="_blank"
         >
           About OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Contact"
+          target="_blank"
         >
           Contact OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Creators"
+          target="_blank"
         >
           Creators
-        </h1>
+        </a>
       </header>
       <div
         className="bg-no-repeat bg-cover bg-center relative"

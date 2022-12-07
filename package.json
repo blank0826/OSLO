@@ -13,6 +13,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^3.9.1",
+    "emailjs-com": "^3.2.0",
     "firebase": "^9.12.1",
     "mobiscroll": "^3.0.0-beta6",
     "mobiscroll-react": "^4.0.0",

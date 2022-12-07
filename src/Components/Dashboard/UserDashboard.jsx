@@ -6,7 +6,7 @@ import { IoBookSharp } from "react-icons/io5";
 import { BsPencilSquare } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
-import { BsInfoCircle } from "react-icons/bs";
+import { BsInfoCircle, BsQuestionCircle } from "react-icons/bs";
 import { BiTimeFive } from "react-icons/bi";
 import { MdOutlineSpeakerNotes } from "react-icons/md";
 import { TbCreditCard } from "react-icons/tb";
@@ -293,7 +293,18 @@ export default function UserDashboard() {
       locationCourse = locationCourse.substring(0, index);
     }
     console.log(locationCourse);
+
+    var arr = [];
+
     uploadQuery(locationCourse, queryContent);
+
+    while (arr.length == 0) {
+      console.log(arr);
+      var temp = fetchCourses();
+      arr = arr.concat(temp);
+    }
+
+    setAllCourses(arr);
 
     //add query
   };
@@ -347,36 +358,42 @@ export default function UserDashboard() {
         class="py-6 bg-gray-700 text-white text-center flex justify-around"
         style={{ height: "12vh", backgroundColor: "#FCE2DB" }}
       >
-        <h1
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/About"
+          target="_blank"
         >
           About OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Contact"
+          target="_blank"
         >
           Contact OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Creators"
+          target="_blank"
         >
           Creators
-        </h1>
+        </a>
         <Dialog open={openQueryDialog} onClose={handleClose}>
           <DialogTitle>Raise a Query</DialogTitle>
           <DialogContent>
@@ -601,7 +618,7 @@ export default function UserDashboard() {
                         setProfileDisplay(false);
                       }}
                     >
-                      <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <BsQuestionCircle className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span
                         className="text-gray-100"
                         style={{

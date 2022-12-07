@@ -4,6 +4,8 @@ import { React } from "react";
 import {
   BsFillArrowRightSquareFill,
   BsFillArrowLeftSquareFill,
+  BsFillPersonPlusFill,
+  BsQuestionCircle,
 } from "react-icons/bs";
 import { FcFolder } from "react-icons/fc";
 import { CgProfile } from "react-icons/cg";
@@ -25,6 +27,7 @@ import { CMultiSelect } from "@coreui/react-pro";
 import lockedFolder from "../../images/lock.png";
 import enrolledFolder from "../../images/open-folder.png";
 import { Controller, useForm } from "react-hook-form";
+import { AiOutlineFileUnknown } from "react-icons/ai";
 import ProfProfile from "../Profile/ProfProfile";
 import ProfQuery from "./ProfQuery";
 import { ToastContainer, toast } from "react-toastify";
@@ -424,7 +427,9 @@ export default function ProfDashboard() {
     console.log(selectedVirtualCourse.value);
     console.log(rollNumber);
     if (selectedVirtualCourse == "") {
-      notifyProfDashboard("Kindly add course for the student to be enrolled in!");
+      notifyProfDashboard(
+        "Kindly add course for the student to be enrolled in!"
+      );
       return;
     }
     if (rollNumber == "") {
@@ -593,37 +598,43 @@ export default function ProfDashboard() {
           alignItems: "center",
         }}
       >
-        <h1
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/About"
+          target="_blank"
         >
           About OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Contact"
+          target="_blank"
         >
           Contact OSLO
-        </h1>
-        <h1
+        </a>
+        <a
           className="text-2xl tracking-wider"
           style={{
             color: "#9656A1",
             fontWeight: "500",
             fontFamily: "Playfair Display",
           }}
+          href="/Creators"
+          target="_blank"
         >
           Creators
-        </h1>
-        <ToastContainer />
+        </a>
+
         <Dialog
           className="virtualStudentDialog"
           open={openVirtualDialog}
@@ -929,7 +940,6 @@ export default function ProfDashboard() {
                     className="rounded-sm"
                     style={{ marginBottom: "1.25rem" }}
                     onClick={() => {
-
                       // setQueryVisibility(false);
                       // setBackDisplay(false);
                       // setLocation("");
@@ -942,7 +952,7 @@ export default function ProfDashboard() {
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
-                      <BsPencilSquare className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <BsFillPersonPlusFill className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span
                         className="text-gray-100 tracking-wider"
                         style={{
@@ -1007,7 +1017,7 @@ export default function ProfDashboard() {
                         // setremoveModule(false);
                       }}
                     >
-                      <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
+                      <BsQuestionCircle className="w-6 h-6 text-gray-100 fill-white stroke-current" />
                       <span
                         className="text-gray-100"
                         style={{
@@ -1085,53 +1095,55 @@ export default function ProfDashboard() {
               >
                 Hello {accessUserName()} !
               </div>
-              <button
-                className="saveProfileButton"
-                style={{
-                  // height: "4rem",
-                  marginTop: "1rem",
-                  marginBottom: "1rem",
-                  // marginRight: "2rem",
-                  display: addModule ? "block" : "none",
-                  background: "#C490E4",
-                  fontSize: "18px",
-                  border: "2px solid #F7E8F6",
-                  color: "#F7E8F6",
-                  fontFamily: "Playfair Display",
-                }}
-                onClick={handleClickOpenAddModule}
-              >
-                Add Module
-              </button>
-
-              <div className="flex justify-around p-5">
+              {addModule ? (
                 <button
                   className="saveProfileButton"
                   style={{
                     // height: "4rem",
-                    marginTop: ".5rem",
-                    padding: "0.4rem",
+                    marginTop: "1rem",
                     marginBottom: "1rem",
                     marginRight: "11rem",
-                    display: addContent ? "block" : "none",
+                    display: addModule ? "block" : "none",
                     background: "#C490E4",
                     fontSize: "18px",
                     border: "2px solid #F7E8F6",
                     color: "#F7E8F6",
                     fontFamily: "Playfair Display",
                   }}
-                  onClick={handleClick}
+                  onClick={handleClickOpenAddModule}
                 >
-                  Add Content
+                  Add Module
                 </button>
-                <input
-                  ref={refContainer}
-                  onChange={handleChangeUpload}
-                  type="file"
-                  style={{ display: "none" }}
-                  // multiple={false}
-                />
-              </div>
+              ) : (
+                <div className="flex justify-around">
+                  <button
+                    className="saveProfileButton"
+                    style={{
+                      // height: "4rem",
+                      marginTop: "1rem",
+                      // padding: "0.4rem",
+                      marginBottom: "1rem",
+                      marginRight: "11rem",
+                      display: addContent ? "block" : "none",
+                      background: "#C490E4",
+                      fontSize: "18px",
+                      border: "2px solid #F7E8F6",
+                      color: "#F7E8F6",
+                      fontFamily: "Playfair Display",
+                    }}
+                    onClick={handleClick}
+                  >
+                    Add Content
+                  </button>
+                  <input
+                    ref={refContainer}
+                    onChange={handleChangeUpload}
+                    type="file"
+                    style={{ display: "none" }}
+                    // multiple={false}
+                  />
+                </div>
+              )}
             </div>
             <RiFolderReceivedFill
               className="cursor-pointer"
@@ -1230,13 +1242,16 @@ export default function ProfDashboard() {
                                   <GrDocumentPpt
                                     style={{ width: "5rem", height: "5rem" }}
                                   />
-                                ) : course.format == "video" ? (
+                                ) : course.format == "mp4" ||
+                                  course.format == "mov" ||
+                                  course.format == "wmv" ||
+                                  course.format == "mkv" ||
+                                  course.format == "video" ? (
                                   <MdOndemandVideo
                                     style={{ width: "5rem", height: "5rem" }}
                                   />
                                 ) : (
-                                  <img
-                                    src={enrolledFolder}
+                                  <AiOutlineFileUnknown
                                     style={{ width: "5rem", height: "5rem" }}
                                   />
                                 )}

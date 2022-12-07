@@ -1,6 +1,7 @@
 import { React } from "react";
 import osloStrip from "../../images/osloStrip.png";
-
+import CSE_JayatiSharma from "../../images/CSE_JayatiSharma.jpg";
+import CSE_AdityaSrivastava from "../../images/CSE_Aditya_Srivastava.jpg";
 export default function Creators() {
   return (
     <>
@@ -32,7 +33,7 @@ export default function Creators() {
                 fontSize: "35px",
                 padding: "2%",
                 color: "purple",
-                backgroundColor: "#FFDABB",
+                backgroundColor: "#F5EDDC",
                 fontWeight: "bold",
                 fontFamily: "Playfair Display",
               }}
@@ -59,9 +60,9 @@ export default function Creators() {
                 <div>
                   {" "}
                   <img
-                    src={osloStrip}
+                    src={CSE_AdityaSrivastava}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem" }}
+                    style={{ height: "10rem", marginTop: "1rem" }}
                   />
                   <h1>Aditya Srivastava</h1>
                 </div>
@@ -70,9 +71,9 @@ export default function Creators() {
                 <div>
                   {" "}
                   <img
-                    src={osloStrip}
+                    src={CSE_JayatiSharma}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem" }}
+                    style={{ height: "10rem", marginTop: "1rem" }}
                   />
                   <h1>Jayati Sharma</h1>
                 </div>
@@ -83,7 +84,7 @@ export default function Creators() {
                   <img
                     src={osloStrip}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem" }}
+                    style={{ height: "10rem", marginTop: "1rem" }}
                   />
                   <h1>Akansh Mittal</h1>
                 </div>

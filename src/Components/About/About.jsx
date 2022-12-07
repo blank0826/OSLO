@@ -1,6 +1,5 @@
 import { React } from "react";
 import osloStrip from "../../images/osloStrip.png";
-
 export default function About() {
   return (
     <>
@@ -35,10 +34,9 @@ export default function About() {
                 fontFamily: "Playfair Display",
               }}
             >
-              {/* <img src={osloStrip} className="logo" /> */}
-              We are a group of three students at Shiv Nadar Institute of
-              Eminence, who thought of easing the academic experience for the
-              upcoming batches at our institution by conceptualizing OSLO.
+              {/* <img src={osloStrip} className="logo" /> */}A borderless
+              information exchange ecosystem, empowering each category of
+              university members holistically.
             </div>
             <div
               className="self-start hidden lg:flex flex-col text-white"
@@ -47,8 +45,8 @@ export default function About() {
                 fontSize: "30px",
                 marginTop: "2%",
                 padding: "1%",
-                color: "purple",
-                backgroundColor: "#FFDABB",
+                color: "#9656A1",
+                backgroundColor: "#F5EDDC",
                 fontWeight: "bold",
                 fontFamily: "Playfair Display",
               }}

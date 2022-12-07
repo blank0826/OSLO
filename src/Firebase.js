@@ -811,6 +811,7 @@ const addVStudent = (rollNumber, course) => {
   let uid = "";
   onValue(studentData, (snapshot) => {
     const data = snapshot.val();
+    console.log(data);
     if (data == null) {
       notifyProfDashboard("Student does not exist!");
       return;
@@ -840,12 +841,11 @@ const addVStudent = (rollNumber, course) => {
   }
 };
 
-
 const updateReadFirebase = (courseKey, read) => {
   const updates = {};
   updates["/courses/" + courseKey + "/queryRead"] = read;
   update(ref(db), updates);
-}
+};
 
 const addModuleFunc = (courseKey, newContentKey) => {
   set(ref(db, "courses/" + courseKey + "/content/" + newContentKey + "/0"), {
