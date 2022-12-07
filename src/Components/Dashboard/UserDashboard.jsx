@@ -745,46 +745,55 @@ export default function UserDashboard() {
                         </div>
                       )))
                     ) : (
-                      courses.map((course) => (
-                        <div class="xl:w-1/5 md:w-1/3 p-4">
-                          <div
-                            class="p-6 rounded-lg cursor-pointer"
-                            onClick={() => getDownloadURL(course.url)}
+                      courses.map((course) =>
+                        course.format == "New Empty Module" ? (
+                          <h1
+                            className="m-auto text-2xl"
+                            style={{ marginTop: "30vh" }}
                           >
-                            <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                              {course.format == "pdf" ? (
-                                <VscFilePdf
-                                  style={{
-                                    width: "5rem",
-                                    height: "5rem",
-                                    color: "darkred",
-                                  }}
-                                />
-                              ) : course.format == "docx" ? (
-                                <GrDocumentWord
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : course.format == "ppt" ? (
-                                <GrDocumentPpt
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : course.format == "video" ? (
-                                <MdOndemandVideo
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : (
-                                <img
-                                  src={enrolledFolder}
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              )}
+                            Empty module
+                          </h1>
+                        ) : (
+                          <div class="xl:w-1/5 md:w-1/3 p-4">
+                            <div
+                              class="p-6 rounded-lg cursor-pointer"
+                              onClick={() => getDownloadURL(course.url)}
+                            >
+                              <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
+                                {course.format == "pdf" ? (
+                                  <VscFilePdf
+                                    style={{
+                                      width: "5rem",
+                                      height: "5rem",
+                                      color: "darkred",
+                                    }}
+                                  />
+                                ) : course.format == "docx" ? (
+                                  <GrDocumentWord
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : course.format == "ppt" ? (
+                                  <GrDocumentPpt
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : course.format == "video" ? (
+                                  <MdOndemandVideo
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : (
+                                  <img
+                                    src={enrolledFolder}
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                )}
+                              </div>
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                {course.name}
+                              </h2>
                             </div>
-                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
-                              {course.name}
-                            </h2>
                           </div>
-                        </div>
-                      ))
+                        )
+                      )
                     )
                   ) : (
                     (openDetail == true ? setOpenDetail(false) : "",

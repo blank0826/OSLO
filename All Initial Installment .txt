@@ -13,3 +13,4 @@ npm i resolve-url-loader@3.0.0
 npm i webpack@4.22.0
 npm config set legacy-peer-deps true
 npm i @kunukn/react-collapse
+npm install --save react-toastify

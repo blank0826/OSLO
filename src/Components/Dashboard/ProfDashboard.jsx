@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState, CSSProperties } from "react";
 import { React } from "react";
 import {
@@ -26,6 +26,9 @@ import lockedFolder from "../../images/lock.png";
 import enrolledFolder from "../../images/open-folder.png";
 import { Controller, useForm } from "react-hook-form";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   LogoutProf,
   fetchCourses,
@@ -36,6 +39,10 @@ import {
   fetchDept,
   accessUserName,
   addVStudent,
+  addModuleFunc,
+  removeModuleFunc,
+  removeDoc,
+  handleUploadFile,
 } from "../../Firebase";
 
 import logo from "../../images/logo.png";
@@ -69,9 +76,26 @@ export default function ProfDashboard() {
   const [profileDisplay, setProfileDisplay] = useState(false);
   const [showQueries, setShowQueries] = useState(false);
   const [selectedVirtualCourse, setSelectedVirtualCourse] = useState(false);
+  const [addModule, setaddModule] = useState(false);
+  const [addContent, setaddContent] = useState(false);
+  const [openAddContent, setOpenAddContent] = useState(false);
+
+  const [openAddModule, setOpenAddModule] = useState(false);
+  const [openRemoveOrDownloadDoc, setOpenRemoveOrDownloadDoc] = useState(false);
+
+  const [openRemoveOrAddModule, setopenRemoveOrAddModule] = useState(false);
+
+  const [moduleIndex, setModuleIndex] = useState("");
+  const [docKey, setDocKey] = useState("");
+
+  const [fileInput, setFile] = useState("");
+
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#C490E4");
   const { register, handleSubmit, errors, control } = useForm();
+
+  let [loading1, setLoading1] = useState(true);
+  let [color1, setColor1] = useState("#C490E4");
 
   const override = {
     display: "block",
@@ -80,6 +104,14 @@ export default function ProfDashboard() {
   };
 
   const navigate = useNavigate();
+
+  const refContainer = useRef(null);
+
+  const notify = () => toast("Module Added Successfully!");
+  const notifyRemove = () => toast("Module Removed Successfully!");
+  const notifyRemoveDoc = () => toast("Content Removed Successfully!");
+  const notifyAddingDoc = () => toast("Uploading, please wait!");
+  const notifyAddedDoc = () => toast("Document added successfully!");
 
   useEffect(() => {
     componentDidUpdate();
@@ -106,7 +138,15 @@ export default function ProfDashboard() {
             isFixed: true,
           });
         });
+        // console.log(location);
         setTaughtCoursesSelect(taughtCSelect);
+      } else {
+        if (location != "") {
+          if (location.indexOf("/") == -1) {
+            console.log(location);
+            openCCourse(location);
+          } else openFCourse(location);
+        }
       }
     }
 
@@ -133,6 +173,7 @@ export default function ProfDashboard() {
         setAllTags(groupedOptions);
       }
     }
+    console.log(allCourses);
   }, [courses, taughtCourses]);
 
   function componentDidUpdate() {
@@ -184,6 +225,7 @@ export default function ProfDashboard() {
     setBackDisplay(false);
     setQueryVisibility(false);
     setLocation("");
+    // setaddModule(false);
     setCourses(taggedCourseAll);
   };
 
@@ -196,39 +238,92 @@ export default function ProfDashboard() {
   };
 
   const openCCourse = (courseKey) => {
-    // checkEnrolled(courseKey);
+    taughtCourses.map((course) => {
+      if (course.key == courseKey) {
+        setaddModule(true);
+      }
+    });
     setQueryVisibility(true);
     setBackDisplay(true);
-    setLocation(location + "" + courseKey);
+    console.log(location);
+    if (location == "" || location == null)
+      setLocation(location + "" + courseKey);
     var data = allCourses.filter((course) => course.key == courseKey);
-    setOpenedCourseData(data);
-    let val = courses;
-    let arr = val.filter((c) => c.key == courseKey);
-    arr = arr[0].data.content;
-    setCourses(arr);
+    console.log(courseKey);
+    console.log(data);
+    if (courses[0].key != undefined) {
+      setOpenedCourseData(data);
+      let val = courses;
+      console.log(val);
+      let arr = val.filter((c) => c.key == courseKey);
+      console.log(arr);
+      arr = arr[0].data.content;
+      setCourses(arr);
+    }
   };
 
-  // const checkEnrolled = (courseKey) => {
-  //   console.log(enrollCourses);
-  //   console.log(courseKey);
-  //   for (let i = 0; i < enrollCourses.length; i++) {
-  //     if (enrollCourses[i] == courseKey) {
-  //       setEnrolled(true);
-  //       return;
-  //     }
-  //   }
+  const handleCloseRemoveOrAddModule = () => {
+    setopenRemoveOrAddModule(false);
+  };
 
-  //   setEnrolled(false);
-  //   return;
-  // };
+  const removeOrOpenModule = (index) => {
+    setModuleIndex(index);
+    setopenRemoveOrAddModule(true);
+  };
+
+  const handleRemoveModule = () => {
+    setopenRemoveOrAddModule(false);
+    removeModuleFunc(moduleIndex, location);
+
+    notifyRemove();
+
+    let val = [];
+    let arr = accessProf();
+    val = val.concat(arr);
+    setTaughtCourses(val);
+    let taughtCSelect = [];
+    val.map((courses) => {
+      taughtCSelect.push({
+        value: courses.key,
+        label: courses.key,
+        isFixed: true,
+      });
+    });
+    setTaughtCoursesSelect(taughtCSelect);
+
+    let val1 = [];
+    let arr1 = fetchCourses();
+    val1 = val1.concat(arr1);
+    setCourses(val1);
+    setAllCourses(val1);
+  };
+
+  const handleOpenModule = () => {
+    setopenRemoveOrAddModule(false);
+    openFCourse(moduleIndex);
+  };
 
   const openFCourse = (index) => {
-    setLocation(location + "/" + index);
-    // console.log(index);
-    let val = courses;
-    let arr = val[index];
-    // console.log(arr);
-    setCourses(arr);
+    console.log("Location is " + location);
+    console.log("Index is " + index);
+    if (location.indexOf("/") == -1) {
+      setLocation(location + "/" + index);
+    }
+
+    setaddModule(false);
+
+    taughtCourses.map((course) => {
+      if (course.key == location) {
+        setaddContent(true);
+        // console.log(location);
+      }
+    });
+    console.log(courses);
+    if (courses[0].format == undefined) {
+      let val = courses;
+      let arr = val[index];
+      setCourses(arr);
+    }
   };
 
   function getTaughtCourses() {
@@ -264,25 +359,21 @@ export default function ProfDashboard() {
     setCourseSearch("");
   };
 
-  // const submitQuery = () => {
-  //   setQueryDialog(false);
-  //   setQuery("");
-  //   let queryContent = query;
-  //   let locationCourse = location;
-  //   var index = locationCourse.indexOf("/");
-
-  //   if (index != -1) {
-  //     locationCourse = locationCourse.substring(0, index);
-  //   }
-  //   console.log(locationCourse);
-  //   uploadQuery(locationCourse, queryContent);
-
-  //   //add query
-  // };
-
   const goBack = () => {
+    setaddContent(false);
+    // setremoveModule(false);
     let locationCourse = location;
     var index = location.indexOf("/");
+    if (locationCourse.split("/").length == 2) {
+      var courseKey = locationCourse.substring(0, index);
+      taughtCourses.map((course) => {
+        if (course.key == courseKey) {
+          setaddModule(true);
+        }
+      });
+    } else {
+      setaddModule(false);
+    }
 
     if (index == -1) {
       setCourses(allCourses);
@@ -341,6 +432,150 @@ export default function ProfDashboard() {
     setVirtualDialog(false);
   }
 
+  const handleClickOpenAddModule = () => {
+    setOpenAddModule(true);
+  };
+
+  const handleCloseAddModule = () => {
+    setOpenAddModule(false);
+  };
+
+  const handleYesAddModule = () => {
+    taughtCourses.map((course) => {
+      if (course.key == location) {
+        let arr = course.data.content;
+        let max = 0;
+        arr.map((module, i) => {
+          max = i > max ? i : max;
+        });
+        var msg = addModuleFunc(location, max + 1);
+        notify();
+      }
+    });
+    setOpenAddModule(false);
+
+    let val = [];
+    let arr = accessProf();
+    val = val.concat(arr);
+    setTaughtCourses(val);
+    let taughtCSelect = [];
+    val.map((courses) => {
+      taughtCSelect.push({
+        value: courses.key,
+        label: courses.key,
+        isFixed: true,
+      });
+    });
+    setTaughtCoursesSelect(taughtCSelect);
+
+    let val1 = [];
+    let arr1 = fetchCourses();
+    val1 = val1.concat(arr1);
+    setCourses(val1);
+    setAllCourses(val1);
+  };
+
+  const handleOpenRemoveOrDownloadDoc = (item) => {
+    setOpenRemoveOrDownloadDoc(true);
+    setDocKey(item);
+  };
+
+  const handleCloseRemoveOrDownloadDoc = () => {
+    setOpenRemoveOrDownloadDoc(false);
+  };
+
+  const handleDownloadDoc = () => {
+    setOpenRemoveOrDownloadDoc(false);
+
+    var getCourse = allCourses.filter(
+      (course) => course.key == location.substring(0, location.indexOf("/"))
+    );
+
+    console.log(getCourse[0]);
+    var name =
+      getCourse[0].data.content[location.substring(location.indexOf("/") + 1)][
+        docKey
+      ]["url"];
+    getURL(location, name);
+  };
+
+  const handleRemoveDoc = () => {
+    setOpenRemoveOrDownloadDoc(false);
+    removeDoc(location, docKey);
+
+    let val = [];
+    let arr = accessProf();
+    val = val.concat(arr);
+    setTaughtCourses(val);
+    let taughtCSelect = [];
+    val.map((courses) => {
+      taughtCSelect.push({
+        value: courses.key,
+        label: courses.key,
+        isFixed: true,
+      });
+    });
+    setTaughtCoursesSelect(taughtCSelect);
+
+    let val1 = [];
+    let arr1 = fetchCourses();
+    val1 = val1.concat(arr1);
+    var indexKey = "";
+    val1.map((course, i) => {
+      if (course.key == location.substring(0, location.indexOf("/"))) {
+        indexKey = i;
+      }
+    });
+    setCourses(val1[indexKey].data.content[moduleIndex]);
+    setAllCourses(val1);
+
+    notifyRemoveDoc();
+  };
+
+  const handleClickOpenAddContent = () => {
+    setOpenAddContent(true);
+  };
+
+  const handleClick = (event) => {
+    refContainer.current.click();
+  };
+
+  const handleChangeUpload = (event) => {
+    console.log(event.target.files[0]);
+    setFile(event.target.files[0]);
+
+    handleUploadFile(event.target.files[0], location);
+    notifyAddingDoc();
+    setTimeout(function () {
+      let val = [];
+      let arr = accessProf();
+      val = val.concat(arr);
+      setTaughtCourses(val);
+      let taughtCSelect = [];
+      val.map((courses) => {
+        taughtCSelect.push({
+          value: courses.key,
+          label: courses.key,
+          isFixed: true,
+        });
+      });
+      setTaughtCoursesSelect(taughtCSelect);
+
+      let val1 = [];
+      let arr1 = fetchCourses();
+      val1 = val1.concat(arr1);
+      var indexKey = "";
+      val1.map((course, i) => {
+        if (course.key == location.substring(0, location.indexOf("/"))) {
+          indexKey = i;
+        }
+      });
+      setCourses(val1[indexKey].data.content[moduleIndex]);
+      setAllCourses(val1);
+      notifyAddedDoc();
+    }, 5000);
+  };
+
   return (
     <>
       <header
@@ -381,6 +616,7 @@ export default function ProfDashboard() {
         >
           Creators
         </h1>
+        <ToastContainer />
         <Dialog
           className="virtualStudentDialog"
           open={openVirtualDialog}
@@ -420,6 +656,104 @@ export default function ProfDashboard() {
           <DialogActions>
             <Button onClick={handleClose}>Close</Button>
             <Button onClick={addVirtualStudent}>Add</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={openAddModule}
+          onClose={handleCloseAddModule}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Do you really want to add a module?"}
+          </DialogTitle>
+          <DialogActions>
+            <Button onClick={handleCloseAddModule}>No</Button>
+            <Button onClick={handleYesAddModule} autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={openRemoveOrAddModule}
+          onClose={handleCloseRemoveOrAddModule}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"What you want to do next?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              mb={2}
+              sx={{ color: "red", marginBottom: "0px" }}
+            >
+              {moduleIndex == 0
+                ? "Introductory module cannot be deleted"
+                : "Please note that removing a module will remove all the content in it."}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "space-around" }}>
+            <Button onClick={handleOpenModule}>Open Module</Button>
+            {moduleIndex == 0 ? (
+              ""
+            ) : (
+              <Button onClick={handleRemoveModule}>Remove Module</Button>
+            )}
+            <Button onClick={handleCloseRemoveOrAddModule}>Go Back</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={openRemoveOrDownloadDoc}
+          onClose={handleCloseRemoveOrDownloadDoc}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"What you want to do next?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              mb={2}
+              sx={{ color: "red", marginBottom: "0px" }}
+            >
+              {/* {moduleIndex == 0
+                ? console.log(
+                    allCourses.filter((course) => {
+                      return course.key == location;
+                    })
+                  )
+                : ""} */}
+              {moduleIndex == 0 && location.indexOf("/") != -1
+                ? allCourses.filter((course) => {
+                    return (
+                      course.key == location.substring(0, location.indexOf("/"))
+                    );
+                  })[0].data["content"].length > 1
+                  ? "Deleting a content will remove it permanently."
+                  : "Introductory module cannot be deleted completely"
+                : "Deleting a content will remove it permanently."}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "space-around" }}>
+            <Button onClick={handleDownloadDoc}>Open Content</Button>
+            {moduleIndex == 0 && location.indexOf("/") != -1 ? (
+              allCourses.filter((course) => {
+                return (
+                  course.key == location.substring(0, location.indexOf("/"))
+                );
+              })[0].data["content"].length > 1 ? (
+                <Button onClick={handleRemoveDoc}>Remove Content</Button>
+              ) : (
+                ""
+              )
+            ) : (
+              <Button onClick={handleRemoveDoc}>Remove Content</Button>
+            )}
+            <Button onClick={handleCloseRemoveOrDownloadDoc}>Go Back</Button>
           </DialogActions>
         </Dialog>
       </header>
@@ -532,6 +866,9 @@ export default function ProfDashboard() {
                       setShowQueries(false);
                       setLocation("");
                       setCourses(fetchCourses);
+                      setaddModule(false);
+                      setaddContent(false);
+                      // setremoveModule(false);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -560,6 +897,9 @@ export default function ProfDashboard() {
                       setShowQueries(false);
                       setProfileDisplay(false);
                       getTaughtCourses();
+                      setaddModule(false);
+                      setaddContent(false);
+                      // setremoveModule(false);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -587,6 +927,9 @@ export default function ProfDashboard() {
                       // setOpenedCourseData("");
                       setShowQueries(false);
                       setProfileDisplay(false);
+                      setaddModule(false);
+                      setaddContent(false);
+                      // setremoveModule(false);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -617,6 +960,9 @@ export default function ProfDashboard() {
                         setBackDisplay(false);
                         setShowQueries(false);
                         setQueryVisibility(false);
+                        setaddModule(false);
+                        setaddContent(false);
+                        // setremoveModule(false);
                       }}
                     >
                       <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
@@ -646,6 +992,9 @@ export default function ProfDashboard() {
                         setOpenDetail(false);
                         setShowQueries(true);
                         setProfileDisplay(false);
+                        setaddModule(false);
+                        setaddContent(false);
+                        // setremoveModule(false);
                       }}
                     >
                       <CgProfile className="w-6 h-6 text-gray-100 fill-white stroke-current" />
@@ -726,24 +1075,53 @@ export default function ProfDashboard() {
               >
                 Hello {accessUserName()} !
               </div>
-              {/* <button
+              <button
                 className="saveProfileButton"
                 style={{
                   // height: "4rem",
                   marginTop: "1rem",
                   marginBottom: "1rem",
-                  marginRight: "11rem",
-                  display: queryVisibility ? "block" : "none",
+                  // marginRight: "2rem",
+                  display: addModule ? "block" : "none",
                   background: "#C490E4",
-                  fontSize: "20px",
+                  fontSize: "18px",
                   border: "2px solid #F7E8F6",
                   color: "#F7E8F6",
                   fontFamily: "Playfair Display",
                 }}
-                onClick={handleClickOpen}
+                onClick={handleClickOpenAddModule}
               >
-                Raise Query
-              </button> */}
+                Add Module
+              </button>
+
+              <div className="flex justify-around p-5">
+                <button
+                  className="saveProfileButton"
+                  style={{
+                    // height: "4rem",
+                    marginTop: ".5rem",
+                    padding: "0.4rem",
+                    marginBottom: "1rem",
+                    marginRight: "11rem",
+                    display: addContent ? "block" : "none",
+                    background: "#C490E4",
+                    fontSize: "18px",
+                    border: "2px solid #F7E8F6",
+                    color: "#F7E8F6",
+                    fontFamily: "Playfair Display",
+                  }}
+                  onClick={handleClick}
+                >
+                  Add Content
+                </button>
+                <input
+                  ref={refContainer}
+                  onChange={handleChangeUpload}
+                  type="file"
+                  style={{ display: "none" }}
+                  // multiple={false}
+                />
+              </div>
             </div>
             <RiFolderReceivedFill
               className="cursor-pointer"
@@ -775,10 +1153,15 @@ export default function ProfDashboard() {
                           onMouseEnter={handleHover}
                           onMouseLeave={handleHoverOut}
                         >
-                          {/* {console.log(allCourses)} */}
                           <div
                             class="p-6 rounded-lg cursor-pointer"
-                            onClick={() => openFCourse(i)}
+                            onClick={() => {
+                              taughtCourses.filter((course) => {
+                                return course.key == location;
+                              }).length > 0
+                                ? removeOrOpenModule(i)
+                                : openFCourse(i);
+                            }}
                           >
                             <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
                               <img
@@ -794,45 +1177,64 @@ export default function ProfDashboard() {
                         </div>
                       )))
                     ) : (
-                      courses.map((course) => (
-                        <div class="xl:w-1/5 md:w-1/3 p-4">
-                          <div
-                            class="p-6 rounded-lg cursor-pointer"
-                            onClick={() => getDownloadURL(course.url)}
+                      (openDetail == false ? setOpenDetail(true) : "",
+                      courses.map((course, i) =>
+                        course.format == "New Empty Module" ? (
+                          <h1
+                            className="m-auto text-2xl"
+                            style={{ marginTop: "30vh" }}
                           >
-                            <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                              {course.format == "pdf" ? (
-                                <VscFilePdf
-                                  style={{
-                                    width: "5rem",
-                                    height: "5rem",
-                                    color: "darkred",
-                                  }}
-                                />
-                              ) : course.format == "docx" ? (
-                                <GrDocumentWord
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : course.format == "ppt" ? (
-                                <GrDocumentPpt
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : course.format == "video" ? (
-                                <MdOndemandVideo
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              ) : (
-                                <img
-                                  src={enrolledFolder}
-                                  style={{ width: "5rem", height: "5rem" }}
-                                />
-                              )}
+                            Empty module
+                          </h1>
+                        ) : (
+                          <div class="xl:w-1/5 md:w-1/3 p-4">
+                            <div
+                              class="p-6 rounded-lg cursor-pointer"
+                              onClick={() => {
+                                taughtCourses.filter((course) => {
+                                  return (
+                                    course.key ==
+                                    location.substring(0, location.indexOf("/"))
+                                  );
+                                }).length > 0
+                                  ? handleOpenRemoveOrDownloadDoc(i)
+                                  : getDownloadURL(course.url);
+                              }}
+                            >
+                              <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
+                                {course.format == "pdf" ? (
+                                  <VscFilePdf
+                                    style={{
+                                      width: "5rem",
+                                      height: "5rem",
+                                      color: "darkred",
+                                    }}
+                                  />
+                                ) : course.format == "docx" ? (
+                                  <GrDocumentWord
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : course.format == "ppt" ? (
+                                  <GrDocumentPpt
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : course.format == "video" ? (
+                                  <MdOndemandVideo
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                ) : (
+                                  <img
+                                    src={enrolledFolder}
+                                    style={{ width: "5rem", height: "5rem" }}
+                                  />
+                                )}
+                              </div>
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                {course.name}
+                              </h2>
                             </div>
-                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
-                              {course.name}
-                            </h2>
                           </div>
-                        </div>
+                        )
                       ))
                     )
                   ) : (
