@@ -14,3 +14,4 @@ npm i webpack@4.22.0
 npm config set legacy-peer-deps true
 npm i @kunukn/react-collapse
 npm install --save react-toastify
+npm i emailjs-com

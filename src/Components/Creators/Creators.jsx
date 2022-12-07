@@ -2,6 +2,7 @@ import { React } from "react";
 import osloStrip from "../../images/osloStrip.png";
 import CSE_JayatiSharma from "../../images/CSE_JayatiSharma.jpg";
 import CSE_AdityaSrivastava from "../../images/CSE_Aditya_Srivastava.jpg";
+import CSE_AkanshMittal from "../../images/CSE_AkanshMittal.jpeg";
 export default function Creators() {
   return (
     <>
@@ -82,7 +83,7 @@ export default function Creators() {
                 <div>
                   {" "}
                   <img
-                    src={osloStrip}
+                    src={CSE_AkanshMittal}
                     className="mx-auto my-auto"
                     style={{ height: "10rem", marginTop: "1rem" }}
                   />

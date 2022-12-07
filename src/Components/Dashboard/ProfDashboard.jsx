@@ -750,7 +750,7 @@ export default function ProfDashboard() {
                     return (
                       course.key == location.substring(0, location.indexOf("/"))
                     );
-                  })[0].data["content"].length > 1
+                  })[0].data["content"][0].length > 1
                   ? "Deleting a content will remove it permanently."
                   : "Introductory module cannot be deleted completely"
                 : "Deleting a content will remove it permanently."}
@@ -763,7 +763,7 @@ export default function ProfDashboard() {
                 return (
                   course.key == location.substring(0, location.indexOf("/"))
                 );
-              })[0].data["content"].length > 1 ? (
+              })[0].data["content"][0].length > 1 ? (
                 <Button onClick={handleRemoveDoc}>Remove Content</Button>
               ) : (
                 ""

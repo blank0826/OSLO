@@ -862,10 +862,29 @@ const removeModuleFunc = (moduleNum, courseKey) => {
 const removeDoc = (location, docKey) => {
   var courseKey = location.substring(0, location.indexOf("/"));
   var moduleNo = location.substring(location.indexOf("/") + 1);
-  const updates = {};
-  updates["/courses/" + courseKey + "/content/" + moduleNo + "/" + docKey] =
-    null;
-  update(ref(db), updates);
+
+  var newIndex = "";
+  var profRef = ref(db, "courses/" + courseKey + "/content/" + moduleNo);
+  onValue(profRef, (snapshot) => {
+    newIndex = snapshot.val().length;
+    // console.log(newIndex);
+  });
+
+  if (newIndex == 1) {
+    set(
+      ref(db, "courses/" + courseKey + "/content/" + moduleNo + "/" + docKey),
+      {
+        format: "New Empty Module",
+        name: null,
+        url: null,
+      }
+    );
+  } else {
+    const updates = {};
+    updates["/courses/" + courseKey + "/content/" + moduleNo + "/" + docKey] =
+      null;
+    update(ref(db), updates);
+  }
   console.log("Deleted");
 };
 
@@ -888,10 +907,16 @@ const handleUploadFile = (file, location) => {
       // download url
       getDownloadURL(uploadTask.snapshot.ref).then((url) => {
         console.log(url);
+
         var newIndex = "";
         var profRef = ref(db, "courses/" + courseKey + "/content/" + moduleNo);
         onValue(profRef, (snapshot) => {
           newIndex = snapshot.val().length;
+          if (newIndex == 1) {
+            if (snapshot.val()[0].format == "New Empty Module") {
+              newIndex = 0;
+            }
+          }
         });
         set(
           ref(
