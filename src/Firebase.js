@@ -587,14 +587,6 @@ function fetchTags() {
             });
           }
         }
-        // if (!checkTag.includes(childData["dept"])) {
-        //   checkTag.push(childData["dept"]);
-        //   arr.push({
-        //     value: childData["dept"],
-        //     label: childData["dept"],
-        //     isFixed: true,
-        //   });
-        // }
       }
     });
   });
@@ -803,7 +795,7 @@ const accessProf = () => {
       }
     });
   });
-  console.log(array);
+  // console.log(array);
   return array;
 };
 
@@ -848,10 +840,75 @@ const addVStudent = (rollNumber, course) => {
   }
 };
 
+
 const updateReadFirebase = (courseKey, read) => {
   const updates = {};
   updates["/courses/" + courseKey + "/queryRead"] = read;
   update(ref(db), updates);
+}
+
+const addModuleFunc = (courseKey, newContentKey) => {
+  set(ref(db, "courses/" + courseKey + "/content/" + newContentKey + "/0"), {
+    format: "New Empty Module",
+  });
+};
+
+const removeModuleFunc = (moduleNum, courseKey) => {
+  const updates = {};
+  updates["/courses/" + courseKey + "/content/" + moduleNum] = null;
+  update(ref(db), updates);
+};
+
+const removeDoc = (location, docKey) => {
+  var courseKey = location.substring(0, location.indexOf("/"));
+  var moduleNo = location.substring(location.indexOf("/") + 1);
+  const updates = {};
+  updates["/courses/" + courseKey + "/content/" + moduleNo + "/" + docKey] =
+    null;
+  update(ref(db), updates);
+  console.log("Deleted");
+};
+
+const handleUploadFile = (file, location) => {
+  var courseKey = location.substring(0, location.indexOf("/"));
+  var moduleNo = location.substring(location.indexOf("/") + 1);
+
+  const storageRef = sRef(
+    storage,
+    courseKey + "/" + moduleNo + "/" + file.name
+  );
+
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {},
+    (err) => console.log(err),
+    () => {
+      // download url
+      getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+        console.log(url);
+        var newIndex = "";
+        var profRef = ref(db, "courses/" + courseKey + "/content/" + moduleNo);
+        onValue(profRef, (snapshot) => {
+          newIndex = snapshot.val().length;
+        });
+        set(
+          ref(
+            db,
+            "courses/" + courseKey + "/content/" + moduleNo + "/" + newIndex
+          ),
+          {
+            format: file["name"].substring(file["name"].lastIndexOf(".") + 1),
+            name: file["name"],
+            url: file["name"],
+          }
+        );
+      });
+    }
+  );
+
+  console.log("Uploaded");
 };
 
 export {
@@ -881,4 +938,8 @@ export {
   uploadProfPhoto,
   fetchEmailIDProf,
   updateReadFirebase,
+  addModuleFunc,
+  removeModuleFunc,
+  removeDoc,
+  handleUploadFile,
 };
