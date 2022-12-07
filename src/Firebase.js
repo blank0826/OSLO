@@ -24,7 +24,14 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
-import { BsArrowReturnLeft } from "react-icons/bs";
+
+import { notifyLoginProf } from "./Components/Login/LoginProf";
+import { notifySigninUser } from "./Components/Signin/SigninUser";
+import { notifyLoginUser } from "./Components/Login/LoginUser";
+import { notifyProfDashboard } from "./Components/Dashboard/ProfDashboard";
+import { notifySigninProf } from "./Components/Signin/SigninProf";
+import { notifyForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
+import { notifyUserDashboard } from "./Components/Dashboard/UserDashboard";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCAkBzXoqjnyZZXs4iZVilta0dyTS2Hoxw",
@@ -43,6 +50,7 @@ const db = getDatabase(app);
 const storage = getStorage();
 
 let countUserActivity = 0;
+let countProfActivity = 0;
 
 function validateField(field) {
   if (field == null) {
@@ -78,14 +86,14 @@ function validatePassword(password) {
 
 const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
   if (!validateField(email) || !validateField(password)) {
-    window.alert("Please fill all the fields.");
+    notifyLoginUser("Please fill all the fields.");
   } else {
     const studentRef = ref(db, "students/");
     onValue(studentRef, (snapshot) => {
       let data = snapshot.val();
       console.log(data);
       if (data == null) {
-        alert("You have not registered!");
+        notifyLoginUser("You have not registered!");
         return;
       }
 
@@ -100,47 +108,50 @@ const HandleLoginFirebaseUser = (navigate, email, password, isChecked) => {
       }
 
       if (val == null) {
-        alert("You have not registered!");
+        notifyLoginUser("You have not registered!");
         return;
       } else {
         // if (val.email == email && val.password == password) {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             const fromLogOut = localStorage.getItem("ComingFromLogoutUser");
-            console.log(email);
-            console.log(password);
-            console.log(auth.currentUser.accessToken);
-            if (!auth.currentUser.emailVerified) {
-              window.alert("Verify your email!");
-            } else {
-              if (isChecked) {
-                console.log("checked");
-                localStorage.setItem("emailUser", email);
-                localStorage.setItem("passwordUser", password);
+            if (fromLogOut == undefined || fromLogOut == null) {
+              console.log(email);
+              console.log(password);
+              console.log(auth.currentUser.accessToken);
+              if (!auth.currentUser.emailVerified) {
+                notifyLoginUser("Verify your email!");
               } else {
-                localStorage.removeItem("emailUser");
-                localStorage.removeItem("passwordUser");
-              }
+                if (isChecked) {
+                  console.log("checked");
+                  localStorage.setItem("emailUser", email);
+                  localStorage.setItem("passwordUser", password);
+                } else {
+                  localStorage.removeItem("emailUser");
+                  localStorage.removeItem("passwordUser");
+                }
 
-              set(ref(db, "token/" + auth.currentUser.uid), {
-                token: auth.currentUser.accessToken,
-              }).catch((error) => {
-                window.alert(error.message);
-              });
+                set(ref(db, "token/" + auth.currentUser.uid), {
+                  token: auth.currentUser.accessToken,
+                }).catch((error) => {
+                  notifyLoginUser(error.message);
+                });
 
-              // localStorage.setItem("Bearer", auth.currentUser.accessToken);
-              // localStorage.setItem("OrphanageId", id);
-              countUserActivity = 1;
-              if (fromLogOut == undefined || fromLogOut == null) {
+                // localStorage.setItem("Bearer", auth.currentUser.accessToken);
+                // localStorage.setItem("OrphanageId", id);
+                countUserActivity = 1;
                 console.log(fromLogOut);
-                window.alert("Signed in!");
-                navigate("/DashboardUser");
+                notifyLoginUser("Signed in!");
+                setTimeout(() => navigate("/DashboardUser"), 1000);
               }
             }
           })
           .catch((error) => {
-            const errorMessage = error.message;
-            window.alert(errorMessage);
+            const fromLogOut = localStorage.getItem("ComingFromLogoutUser");
+            if (fromLogOut == undefined || fromLogOut == null) {
+              const errorMessage = error.message;
+              notifyLoginUser(errorMessage);
+            }
           });
       }
     });
@@ -175,26 +186,22 @@ const HandleSignupUser = async (
   checkRollNumberExists(rollno, function (results) {
     let flag = true;
     if (!validateEmail(email)) {
-      window.alert("Enter a valid email address!");
+      notifySigninUser("Enter a valid email address!");
       flag = false;
-    }
-
-    console.log(email.substring(email.indexOf("@")));
-
-    if (email.substring(email.indexOf("@")) != "@snu.edu.in") {
-      window.alert("Enter SNU email address!");
+    } else if (email.substring(email.indexOf("@")) != "@snu.edu.in") {
+      notifySigninUser("Enter SNU email address!");
       flag = false;
     }
 
     if (!validatePassword(password)) {
-      window.alert(
+      notifySigninUser(
         "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
       );
       flag = false;
     }
 
     if (password !== repeat) {
-      window.alert("Both passwords must be same!");
+      notifySigninUser("Both passwords must be same!");
       flag = false;
     }
 
@@ -202,7 +209,6 @@ const HandleSignupUser = async (
       if (flag && !results) {
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
-            window.alert("User Created");
             checkOnce = checkOnce + 1;
             const user = userCredential.user;
             writeUserData(user.uid, name, email, rollno);
@@ -210,28 +216,29 @@ const HandleSignupUser = async (
               // Email verification sent!
               let msg =
                 "An email verification link has been sent to " + user.email;
-              window.alert(msg);
+              notifyLoginUser("User Created");
+              notifyLoginUser(msg);
             });
 
             updateProfile(auth.currentUser, {
               displayName: name,
             })
               .then(() => {
-                // localStorage.setItem("SignedIn", flag);
                 navigate("/LoginUser");
-                //send email verification
               })
               .catch((error) => {
                 const errorMessage = error.message;
-                window.alert(errorMessage);
+                notifySigninUser(errorMessage);
               });
           })
           .catch((error) => {
             const errorMessage = error.message;
-            window.alert(errorMessage);
+            notifySigninUser(errorMessage);
           });
       } else if (results) {
-        window.alert("Roll number already exists! Kindly check and try again");
+        notifySigninUser(
+          "Roll number already exists! Kindly check and try again"
+        );
       }
     }
   });
@@ -240,8 +247,9 @@ const HandleSignupUser = async (
 const ForgotPasswordFirebase = async (navigate, email) => {
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Password reset link sent!");
+    notifyForgotPassword("Password reset link sent!");
     let valID = localStorage.getItem("FromFP");
+    localStorage.removeItem("FromFP");
     if (valID == 1) {
       navigate("/LoginProf");
     } else if (valID == 2) {
@@ -249,20 +257,20 @@ const ForgotPasswordFirebase = async (navigate, email) => {
     }
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    notifyForgotPassword(err.message);
   }
 };
 
 const HandleLoginFirebaseProf = (navigate, email, password, isChecked) => {
   if (!validateField(email) || !validateField(password)) {
-    window.alert("Please fill all the fields.");
+    notifyLoginProf("Please fill all the fields.");
   } else {
     const profRef = ref(db, "professors/");
     onValue(profRef, (snapshot) => {
       let data = snapshot.val();
 
       if (data == null) {
-        alert("You have not registered!");
+        notifyLoginProf("You have not registered!");
         return;
       }
 
@@ -277,7 +285,7 @@ const HandleLoginFirebaseProf = (navigate, email, password, isChecked) => {
       }
 
       if (val == null) {
-        alert("You have not registered!");
+        notifyLoginProf("You have not registered!");
         return;
       } else {
         if (isChecked) {
@@ -292,25 +300,32 @@ const HandleLoginFirebaseProf = (navigate, email, password, isChecked) => {
         // if (val.email == email && val.password == password) {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
-            console.log(auth.currentUser.accessToken);
-            if (!auth.currentUser.emailVerified) {
-              window.alert("Verify your email!");
-            } else {
-              window.alert("Signed in!");
-              set(ref(db, "token/" + auth.currentUser.uid), {
-                token: auth.currentUser.accessToken,
-              }).catch((error) => {
-                window.alert(error.message);
-              });
+            const fromLogOut = localStorage.getItem("ComingFromLogoutProf");
+            if (fromLogOut == undefined || fromLogOut == null) {
+              console.log(auth.currentUser.accessToken);
+              if (!auth.currentUser.emailVerified) {
+                notifyLoginProf("Verify your email!");
+              } else {
+                notifyLoginProf("Signed in!");
+                set(ref(db, "token/" + auth.currentUser.uid), {
+                  token: auth.currentUser.accessToken,
+                }).catch((error) => {
+                  notifyLoginProf(error.message);
+                });
 
-              // localStorage.setItem("Bearer", auth.currentUser.accessToken);
-              // localStorage.setItem("OrphanageId", id);
-              navigate("/DashboardProf");
+                countProfActivity = 1;
+                // localStorage.setItem("Bearer", auth.currentUser.accessToken);
+                // localStorage.setItem("OrphanageId", id);
+                setTimeout(() => navigate("/DashboardProf"), 1000);
+              }
             }
           })
           .catch((error) => {
-            const errorMessage = error.message;
-            window.alert(errorMessage);
+            const fromLogOut = localStorage.getItem("ComingFromLogoutProf");
+            if (fromLogOut == undefined || fromLogOut == null) {
+              const errorMessage = error.message;
+              notifyLoginProf(errorMessage);
+            }
           });
         // } else {
         // if (val.id != id) {
@@ -329,32 +344,35 @@ const HandleSignupProf = (navigate, email, password, name, contact, repeat) => {
   // localStorage.setItem("SignedIn", "");
 
   if (!validateEmail(email)) {
-    window.alert("Enter a valid email address!");
+    notifySigninProf("Enter a valid email address!");
+    flag = false;
+  } else if (email.substring(email.indexOf("@")) != "@snu.edu.in") {
+    notifySigninProf("Enter SNU email address!");
     flag = false;
   }
 
   if (!validatePassword(password)) {
-    window.alert(
+    notifySigninProf(
       "Password must contain at least a symbol, an uppercase, a lower case letter and a number!"
     );
     flag = false;
   }
 
   if (password !== repeat) {
-    window.alert("Both passwords must be same!");
+    notifySigninProf("Both passwords must be same!");
     flag = false;
   }
 
   if (flag) {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        window.alert("User Created");
         const user = userCredential.user;
         writeProfData(user.uid, name, email, contact, password);
         sendEmailVerification(user).then(() => {
           // Email verification sent!
           let msg = "An email verification link has been sent to " + user.email;
-          window.alert(msg);
+          notifyLoginProf("User Created");
+          notifyLoginProf(msg);
         });
 
         updateProfile(auth.currentUser, {
@@ -367,12 +385,12 @@ const HandleSignupProf = (navigate, email, password, name, contact, repeat) => {
           })
           .catch((error) => {
             const errorMessage = error.message;
-            window.alert(errorMessage);
+            notifySigninProf(errorMessage);
           });
       })
       .catch((error) => {
         const errorMessage = error.message;
-        window.alert(errorMessage);
+        notifySigninProf(errorMessage);
       });
   }
 };
@@ -384,7 +402,7 @@ function writeUserData(userId, name, email, rollno) {
     email: email,
     roll_number: rollno,
   }).catch((error) => {
-    window.alert(error.message);
+    notifySigninUser(error.message);
   });
 }
 
@@ -396,7 +414,7 @@ function writeProfData(userId, name, email, contact, password) {
     contact_number: contact,
     password: password,
   }).catch((error) => {
-    window.alert(error.message);
+    notifySigninProf(error.message);
   });
 }
 
@@ -408,14 +426,24 @@ const LogoutStudent = (navigate) => {
     set(ref(db, "token/" + auth.currentUser.uid), {
       token: null,
     }).catch((error) => {
-      window.alert(error.message);
+      notifyUserDashboard(error.message);
     });
   }
+
+  var status = "";
+
   localStorage.removeItem("loggedInAs");
   localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
-  window.alert("Signed out!");
+  localStorage.setItem("noBackUser", true);
+
+  while (status.length == 0) {
+    status = updateUserDetails(auth.currentUser.uid);
+    console.log(status);
+  }
+
+  notifyUserDashboard("Signed out!");
   signOut(auth);
-  navigate("/LoginUser");
+  setTimeout(() => navigate("/LoginUser"), 1000);
   localStorage.removeItem("Bearer");
 };
 
@@ -426,15 +454,24 @@ const LogoutProf = (navigate) => {
     set(ref(db, "token/" + auth.currentUser.uid), {
       token: null,
     }).catch((error) => {
-      window.alert(error.message);
+      notifyProfDashboard(error.message);
     });
   }
 
+  var status = "";
+
   localStorage.removeItem("loggedInAs");
-  // localStorage.setItem("ComingFromLogoutUser", auth.currentUser.uid);
-  window.alert("Signed out!");
+  localStorage.setItem("ComingFromLogoutProf", auth.currentUser.uid);
+  localStorage.setItem("noBackProf", true);
+
+  while (status.length == 0) {
+    status = updateProfDetails(auth.currentUser.uid);
+    console.log(status);
+  }
+
+  notifyProfDashboard("Signed out!");
   signOut(auth);
-  navigate("/LoginProf");
+  setTimeout(() => navigate("/LoginProf"), 1000);
   localStorage.removeItem("Bearer");
 };
 
@@ -458,7 +495,39 @@ const updateUserDetails = (uid) => {
   updates["/students/" + uid + "/activity/" + date] = {
     work:
       countUserActivity +
-      (arr.activity[date] == undefined ? 0 : arr.activity[date].work),
+      (arr.activity[date] == undefined ? 0 : parseInt(arr.activity[date].work)),
+  };
+
+  console.log(updates);
+
+  update(ref(db), updates).then(() => {
+    return "Successful!";
+  });
+
+  return "Successful!";
+};
+
+const updateProfDetails = (uid) => {
+  var timeStamp = new Date();
+  var date =
+    timeStamp.getDate() +
+    "_" +
+    (timeStamp.getMonth() + 1) +
+    "_" +
+    timeStamp.getFullYear();
+
+  let arr;
+
+  onValue(ref(db, "professors/" + uid), (snapshot) => {
+    arr = snapshot.val();
+  });
+
+  const updates = {};
+  updates["/professors/" + uid + "/lastLogin"] = new Date().getTime();
+  updates["/professors/" + uid + "/activity/" + date] = {
+    work:
+      countProfActivity +
+      (arr.activity[date] == undefined ? 0 : parseInt(arr.activity[date].work)),
   };
 
   console.log(updates);
@@ -488,7 +557,11 @@ const getURL = (location, name) => {
   const pathReference = sRef(storage, location + "/" + name);
   getDownloadURL(pathReference)
     .then((url) => {
-      countUserActivity++;
+      if (localStorage.getItem("loggedInAs") == "User") {
+        countUserActivity++;
+      } else {
+        countProfActivity++;
+      }
       window.open(url, "_blank", "noopener,noreferrer");
     })
     .catch((error) => {
@@ -644,7 +717,7 @@ const uploadUserPhoto = (file) => {
       alert(error);
     },
     () => {
-      window.alert("Uploaded Successfully!");
+      notifyUserDashboard("Uploaded Successfully!");
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
         const updates = {};
         updates["/students/" + auth.currentUser.uid + "/photoURL"] =
@@ -673,7 +746,7 @@ const uploadProfPhoto = (file) => {
     () => {
       console.log(file);
       console.log(auth.currentUser.uid);
-      window.alert("Uploaded Successfully!");
+      notifyProfDashboard("Uploaded Successfully!");
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
         const updates = {};
         updates["/professors/" + auth.currentUser.uid + "/photoURL"] =
@@ -747,7 +820,7 @@ const addVStudent = (rollNumber, course) => {
   onValue(studentData, (snapshot) => {
     const data = snapshot.val();
     if (data == null) {
-      window.alert("Student does not exist!");
+      notifyProfDashboard("Student does not exist!");
       return;
     } else {
       uid = Object.keys(data)[0];
@@ -769,9 +842,9 @@ const addVStudent = (rollNumber, course) => {
     const updates = {};
     updates["/students/" + uid + "/courses"] = courseEnr;
     update(ref(db), updates);
-    window.alert("Student Enrolled Successfully!");
+    notifyProfDashboard("Student Enrolled Successfully!");
   } else {
-    window.alert("Student is already enrolled in this course!");
+    notifyProfDashboard("Student is already enrolled in this course!");
   }
 };
 

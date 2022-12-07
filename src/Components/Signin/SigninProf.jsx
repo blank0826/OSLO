@@ -2,6 +2,12 @@ import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HandleSignupProf } from "../../Firebase";
 import osloStrip from "../../images/osloStrip.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function notifySigninProf(msg) {
+  toast(msg);
+}
 
 export default function SigninUser() {
   const [name, setName] = useState("");
@@ -64,6 +70,7 @@ export default function SigninUser() {
           fontFamily: "Merriweather",
         }}
       >
+        <ToastContainer />
         <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
         <div
           className="sm:flex sm:flex-row mx-0"
@@ -176,3 +183,5 @@ export default function SigninUser() {
     </>
   );
 }
+
+export { notifySigninProf };

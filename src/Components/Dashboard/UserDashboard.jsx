@@ -39,6 +39,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserProfile from "../Profile/UserProfile";
 import UserQuery from "./UserQuery";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function notifyUserDashboard(msg) {
+  toast(msg);
+}
 
 export default function UserDashboard() {
   const [courses, setCourses] = useState([]);
@@ -214,7 +220,7 @@ export default function UserDashboard() {
     console.log(enrolled);
     console.log(index);
     if (index > 0 && !enrolled) {
-      window.alert(
+      notifyUserDashboard(
         "You are not enrolled in the course. First enroll to access the modules."
       );
       return;
@@ -267,7 +273,7 @@ export default function UserDashboard() {
     }
 
     if (arr.length == 0) {
-      window.alert(
+      notifyUserDashboard(
         "The mentioned course doesn't exist. Kindly check the course code and try again!"
       );
     } else {
@@ -397,6 +403,7 @@ export default function UserDashboard() {
         </Dialog>
       </header>
       <div className="flex flex-row">
+        <ToastContainer />
         <div
           className={`${open ? "w-0" : "w-64"} flex flex-col`}
           style={{ height: "158vh" }}
@@ -1108,3 +1115,5 @@ export default function UserDashboard() {
     </>
   );
 }
+
+export { notifyUserDashboard };

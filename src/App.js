@@ -7,7 +7,9 @@ import LoginProf from "./Components/Login/LoginProf";
 import ProfDashboard from "./Components/Dashboard/ProfDashboard";
 import SelectUser from "./Components/SelectUser/SelectUser";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
-
+import Creators from "./Components/Creators/Creators";
+import About from "./Components/About/About";
+import Contact from "./Components/Contact/Contact";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 function App() {
@@ -35,6 +37,9 @@ function App() {
             path="/DashboardProf"
             element={<ProfDashboard />}
           ></Route>
+          <Route exact path="/Creators" element={<Creators />}></Route>
+          <Route exact path="/About" element={<About />}></Route>
+          <Route exact path="/Contact" element={<Contact />}></Route>
         </Routes>
       </BrowserRouter>
     </>

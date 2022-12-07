@@ -3,8 +3,14 @@ import { React, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HandleLoginFirebaseProf } from "../../Firebase";
 import osloStrip from "../../images/osloStrip.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function LoginUser() {
+function notifyLoginProf(msg) {
+  toast(msg);
+}
+
+export default function LoginProf() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecked, setChecked] = useState(false);
@@ -13,6 +19,7 @@ export default function LoginUser() {
   const handleProfLogin = (e) => {
     e.preventDefault();
     localStorage.setItem("loggedInAs", "Prof");
+    localStorage.removeItem("ComingFromLogoutProf");
     HandleLoginFirebaseProf(navigate, email, password, isChecked);
     setEmail("");
     setPassword("");
@@ -23,9 +30,21 @@ export default function LoginUser() {
   };
 
   useEffect(() => {
-    setEmail(localStorage.getItem("emailUser"));
-    setPassword(localStorage.getItem("passwordUser"));
+    setEmail(localStorage.getItem("emailProf"));
+    setPassword(localStorage.getItem("passwordProf"));
+    const val = localStorage.getItem("noBackProf");
+    if (val != undefined) {
+      componentDidUpdate();
+      localStorage.removeItem("noBackProf");
+    }
   }, []);
+
+  function componentDidUpdate() {
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", function (event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }
 
   return (
     <>
@@ -72,6 +91,7 @@ export default function LoginUser() {
         className="bg-no-repeat bg-cover bg-center relative"
         style={{ backgroundColor: "#C490E4", fontFamily: "Merriweather" }}
       >
+        <ToastContainer />
         <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
         <div
           className="sm:flex sm:flex-row mx-0"
@@ -186,3 +206,5 @@ export default function LoginUser() {
     </>
   );
 }
+
+export { notifyLoginProf };

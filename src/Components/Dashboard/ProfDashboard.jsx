@@ -51,6 +51,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 import UserProfile from "../Profile/UserProfile";
 import UserQuery from "./UserQuery";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+require("typeface-abril-fatface");
+
+function notifyProfDashboard(msg) {
+  toast(msg);
+}
+
 export default function ProfDashboard() {
   const [courses, setCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
@@ -84,7 +92,7 @@ export default function ProfDashboard() {
 
   useEffect(() => {
     componentDidUpdate();
-
+    // notifyProfDashboard("hey");
     document.body.classList.add("overflow-x-hidden");
 
     if (courses.length == 0) {
@@ -256,7 +264,7 @@ export default function ProfDashboard() {
     }
 
     if (arr.length == 0) {
-      window.alert(
+      notifyProfDashboard(
         "The mentioned course doesn't exist. Kindly check the course code and try again!"
       );
     } else {
@@ -327,11 +335,11 @@ export default function ProfDashboard() {
     console.log(selectedVirtualCourse.value);
     console.log(rollNumber);
     if (selectedVirtualCourse == "") {
-      window.alert("Kindly add course for the student to be enrolled in!");
+      notifyProfDashboard("Kindly add course for the student to be enrolled in!");
       return;
     }
     if (rollNumber == "") {
-      window.alert("Kindly add roll number of the student");
+      notifyProfDashboard("Kindly add roll number of the student");
       return;
     }
 
@@ -429,6 +437,7 @@ export default function ProfDashboard() {
           className={`${open ? "w-0" : "w-64"} flex flex-col`}
           style={{ height: "158vh" }}
         >
+          <ToastContainer />
           <div className="absolute mx-auto my-10">
             <button>
               <BsFillArrowRightSquareFill
@@ -1137,3 +1146,5 @@ export default function ProfDashboard() {
     </>
   );
 }
+
+export { notifyProfDashboard };

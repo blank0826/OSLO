@@ -3,6 +3,12 @@ import { React, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ForgotPasswordFirebase } from "../../Firebase";
 import osloStrip from "../../images/osloStrip.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function notifyForgotPassword(msg) {
+  toast(msg);
+}
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -118,3 +124,5 @@ export default function ForgotPassword() {
     </>
   );
 }
+
+export { notifyForgotPassword };

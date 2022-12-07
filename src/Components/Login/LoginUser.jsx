@@ -5,7 +5,13 @@ import { React, useState } from "react";
 import osloStrip from "../../images/osloStrip.png";
 import { Link, useNavigate } from "react-router-dom";
 import { HandleLoginFirebaseUser, updateUserDetails } from "../../Firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 require("typeface-abril-fatface");
+
+function notifyLoginUser(msg) {
+  toast(msg);
+}
 
 export default function LoginUser() {
   const [email, setEmail] = useState("");
@@ -32,20 +38,19 @@ export default function LoginUser() {
   useEffect(() => {
     setEmail(localStorage.getItem("emailUser"));
     setPassword(localStorage.getItem("passwordUser"));
-
-    if (localStorage.getItem("ComingFromLogoutUser") != undefined) {
-      if (updateStatus.length == 0) {
-        var uid = localStorage.getItem("ComingFromLogoutUser");
-        var status = updateUserDetails(uid);
-        console.log(status);
-        if (status == undefined) {
-          setUpdateStatus("");
-        } else {
-          setUpdateStatus(status);
-        }
-      }
+    const val = localStorage.getItem("noBackUser");
+    if (val != undefined) {
+      componentDidUpdate();
+      localStorage.removeItem("noBackProf");
     }
-  }, [updateStatus]);
+  }, []);
+
+  function componentDidUpdate() {
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", function (event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }
 
   return (
     <>
@@ -95,6 +100,7 @@ export default function LoginUser() {
           fontFamily: "Merriweather",
         }}
       >
+        <ToastContainer />
         <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
         <div
           className="sm:flex sm:flex-row mx-0"
@@ -213,3 +219,5 @@ export default function LoginUser() {
     </>
   );
 }
+
+export { notifyLoginUser };
