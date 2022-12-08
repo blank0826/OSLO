@@ -401,6 +401,10 @@ function writeUserData(userId, name, email, rollno) {
     name: name,
     email: email,
     roll_number: rollno,
+    branch: "",
+    courses: "",
+    lastLogin: "",
+    photoURL: "",
   }).catch((error) => {
     notifySigninUser(error.message);
   });
@@ -413,6 +417,8 @@ function writeProfData(userId, name, email, contact, password) {
     email: email,
     contact_number: contact,
     password: password,
+    lastLogin: "",
+    photoURL: "",
   }).catch((error) => {
     notifySigninProf(error.message);
   });

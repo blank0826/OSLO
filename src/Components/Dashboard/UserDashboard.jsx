@@ -51,6 +51,7 @@ export default function UserDashboard() {
   const [allCourses, setAllCourses] = useState([]);
   const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
+  const [eventOpened, setEventOpened] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openedCourseData, setOpenedCourseData] = useState("");
   const [allTags, setAllTags] = useState([]);
@@ -85,6 +86,16 @@ export default function UserDashboard() {
     if (courses.length == 0) {
       let val = [];
       let arr = fetchCourses();
+      let tempArr = [];
+      if (arr.length != 0) {
+        tempArr = arr.filter((course) => {
+          return course.key == "Events";
+        });
+        arr = arr.filter((course) => {
+          return course.key != "Events";
+        });
+      }
+      val = val.concat(tempArr);
       val = val.concat(arr);
       setCourses(val);
       setAllCourses(val);
@@ -205,6 +216,15 @@ export default function UserDashboard() {
   const checkEnrolled = (courseKey) => {
     console.log(enrollCourses);
     console.log(courseKey);
+
+    if (courseKey == "Events") {
+      setEnrolled(true);
+      setEventOpened(true);
+      return;
+    } else {
+      setEventOpened(false);
+    }
+
     for (let i = 0; i < enrollCourses.length; i++) {
       if (enrollCourses[i] == courseKey) {
         setEnrolled(true);
@@ -219,7 +239,7 @@ export default function UserDashboard() {
   const openFCourse = (index) => {
     console.log(enrolled);
     console.log(index);
-    if (index > 0 && !enrolled) {
+    if (index > 0 && !enrolled && !eventOpened) {
       notifyUserDashboard(
         "You are not enrolled in the course. First enroll to access the modules."
       );
@@ -529,7 +549,7 @@ export default function UserDashboard() {
                       // setOpenedCourseData("");
                       setShowQueries(false);
                       setLocation("");
-                      setCourses(fetchCourses);
+                      setCourses(allCourses);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md cursor-pointer">
@@ -543,7 +563,7 @@ export default function UserDashboard() {
                           fontFamily: "Merriweather",
                         }}
                       >
-                        All Courses
+                        Resources
                       </span>
                     </div>
                   </li>
@@ -700,7 +720,7 @@ export default function UserDashboard() {
                   marginTop: "1rem",
                   marginBottom: "1rem",
                   marginRight: "11rem",
-                  display: queryVisibility ? "block" : "none",
+                  display: queryVisibility && !eventOpened ? "block" : "none",
                   background: "#C490E4",
                   fontSize: "20px",
                   border: "2px solid #F7E8F6",
@@ -719,7 +739,7 @@ export default function UserDashboard() {
                 color: "black",
                 float: "right",
                 marginTop: "0.5rem",
-                marginRight: "11rem",
+                marginRight: eventOpened ? "0rem" : "11rem",
                 width: "2rem",
                 height: "2rem",
                 display: backDisplay ? "block" : "none",
@@ -748,7 +768,7 @@ export default function UserDashboard() {
                             onClick={() => openFCourse(i)}
                           >
                             <div class="w-15 h-15 inline-flex items-center justify-center text-indigo-500 mb-4">
-                              {!enrolled && i != 0 ? (
+                              {!eventOpened && !enrolled && i != 0 ? (
                                 <img
                                   src={lockedFolder}
                                   id={`Module${i}`}
@@ -762,9 +782,15 @@ export default function UserDashboard() {
                                 />
                               )}
                             </div>
-                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
-                              Module {i}
-                            </h2>
+                            {eventOpened ? (
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                {i == 0 ? "Seminar" : "Conferences"}
+                              </h2>
+                            ) : (
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                Module {i}
+                              </h2>
+                            )}
                           </div>
                         </div>
                       )))
@@ -840,7 +866,12 @@ export default function UserDashboard() {
                           <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
                             {course.key}
                           </h2>
-                          <p class="leading-relaxed text-base">
+                          <p
+                            class="leading-relaxed text-base"
+                            style={{
+                              fontStyle: course.key == "Events" ? "italic" : "",
+                            }}
+                          >
                             {course.data["name"]}
                           </p>
                         </div>
@@ -863,14 +894,18 @@ export default function UserDashboard() {
         </div>
         <div
           className={`${
-            openDetail ? (open == false ? "w-72" : "w-60") : "w-0"
+            openDetail && !eventOpened
+              ? open == false
+                ? "w-72"
+                : "w-60"
+              : "w-0"
           } flex flex-col h-screen`}
           style={{ height: "158vh" }}
         >
           <div
             style={{ backgroundColor: "#C490E4", height: "158vh" }}
             className={` ${
-              openDetail ? "translate-x-0" : "translate-x-full"
+              openDetail && !eventOpened ? "translate-x-0" : "translate-x-full"
             } flex-col h-screen p-3 duration-300 absolute right-0`}
           >
             <div className="space-y-4" style={{ marginTop: "5rem" }}>
@@ -891,7 +926,7 @@ export default function UserDashboard() {
                       setQueryVisibility(false);
                       setBackDisplay(false);
                       setLocation("");
-                      setCourses(fetchCourses);
+                      setCourses(allCourses);
                     }}
                   >
                     <div className="flex items-center p-2 space-x-3 rounded-md">

@@ -5,6 +5,7 @@ import { HandleLoginFirebaseProf } from "../../Firebase";
 import osloStrip from "../../images/osloStrip.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BiArrowBack } from "react-icons/bi";
 
 function notifyLoginProf(msg) {
   toast(msg);
@@ -15,6 +16,11 @@ export default function LoginProf() {
   const [password, setPassword] = useState("");
   const [isChecked, setChecked] = useState(false);
   const navigate = useNavigate();
+
+  const goBack = () => {
+    console.log("here");
+    navigate("/");
+  };
 
   const handleProfLogin = (e) => {
     e.preventDefault();
@@ -98,7 +104,19 @@ export default function LoginProf() {
         style={{ backgroundColor: "#C490E4", fontFamily: "Merriweather" }}
       >
         <ToastContainer />
-        <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
+        <BiArrowBack
+          className="cursor-pointer"
+          onClick={goBack}
+          style={{
+            color: "black",
+            float: "right",
+            marginTop: "0.5rem",
+            marginRight: "0rem",
+            width: "2rem",
+            height: "2rem",
+            display: "block",
+          }}
+        ></BiArrowBack>
         <div
           className="sm:flex sm:flex-row mx-0"
           style={{ justifyContent: "space-evenly", height: "88vh" }}

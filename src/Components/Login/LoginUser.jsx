@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { HandleLoginFirebaseUser, updateUserDetails } from "../../Firebase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BiArrowBack } from "react-icons/bi";
 require("typeface-abril-fatface");
 
 function notifyLoginUser(msg) {
@@ -20,6 +21,11 @@ export default function LoginUser() {
   const [updateStatus, setUpdateStatus] = useState("");
 
   const navigate = useNavigate();
+
+  const goBack = () => {
+    console.log("here");
+    navigate("/");
+  };
 
   const handleUserLogin = (e) => {
     e.preventDefault();
@@ -107,7 +113,19 @@ export default function LoginUser() {
         }}
       >
         <ToastContainer />
-        <div className="absolute bg-gradient-to-b opacity-75 inset-0 z-0"></div>
+        <BiArrowBack
+          className="cursor-pointer"
+          onClick={goBack}
+          style={{
+            color: "black",
+            float: "right",
+            marginTop: "0.5rem",
+            marginRight: "0rem",
+            width: "2rem",
+            height: "2rem",
+            display: "block",
+          }}
+        ></BiArrowBack>
         <div
           className="sm:flex sm:flex-row mx-0"
           style={{ justifyContent: "space-evenly", height: "88vh" }}

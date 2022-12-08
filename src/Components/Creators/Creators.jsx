@@ -31,8 +31,8 @@ export default function Creators() {
               className="self-start hidden lg:flex flex-col text-white"
               style={{
                 marginTop: "4%",
-                fontSize: "35px",
-                padding: "2%",
+                fontSize: "30px",
+                padding: "1.5%",
                 color: "purple",
                 backgroundColor: "#F5EDDC",
                 fontWeight: "bold",
@@ -63,7 +63,7 @@ export default function Creators() {
                   <img
                     src={CSE_AdityaSrivastava}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem", marginTop: "1rem" }}
+                    style={{ height: "15rem", marginTop: "1rem" }}
                   />
                   <h1>Aditya Srivastava</h1>
                 </div>
@@ -74,7 +74,7 @@ export default function Creators() {
                   <img
                     src={CSE_JayatiSharma}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem", marginTop: "1rem" }}
+                    style={{ height: "15rem", marginTop: "1rem" }}
                   />
                   <h1>Jayati Sharma</h1>
                 </div>
@@ -85,7 +85,7 @@ export default function Creators() {
                   <img
                     src={CSE_AkanshMittal}
                     className="mx-auto my-auto"
-                    style={{ height: "10rem", marginTop: "1rem" }}
+                    style={{ height: "15rem", marginTop: "1rem" }}
                   />
                   <h1>Akansh Mittal</h1>
                 </div>

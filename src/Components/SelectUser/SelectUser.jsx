@@ -6,10 +6,20 @@ import AnimationVideo from "../../images/AnimationVideo.mp4";
 
 export default function SelectUser() {
   const [animLoading, setAnimLoading] = useState(true);
+  const [playAnimation, setPlayAnimation] = useState(true);
   useEffect(() => {
-    setTimeout(() => {
+    let play = localStorage.getItem("Animation");
+    console.log(play);
+
+    if (play != undefined) {
+      console.log(play);
       setAnimLoading(false);
-    }, 2000);
+    } else {
+      setTimeout(() => {
+        setAnimLoading(false);
+        localStorage.setItem("Animation", false);
+      }, 2000);
+    }
   }, []);
   return (
     <>

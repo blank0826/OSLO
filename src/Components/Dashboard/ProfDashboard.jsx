@@ -97,7 +97,7 @@ export default function ProfDashboard() {
 
   const [moduleIndex, setModuleIndex] = useState("");
   const [docKey, setDocKey] = useState("");
-
+  const [eventOpened, setEventOpened] = useState(false);
   const [fileInput, setFile] = useState("");
 
   let [loading, setLoading] = useState(true);
@@ -113,6 +113,7 @@ export default function ProfDashboard() {
     borderColor: "#C490E4",
   };
 
+  
   const navigate = useNavigate();
 
   const refContainer = useRef(null);
@@ -122,6 +123,7 @@ export default function ProfDashboard() {
   const notifyRemoveDoc = () => toast("Content Removed Successfully!");
   const notifyAddingDoc = () => toast("Uploading, please wait!");
   const notifyAddedDoc = () => toast("Document added successfully!");
+  
 
   useEffect(() => {
     componentDidUpdate();
@@ -131,6 +133,16 @@ export default function ProfDashboard() {
     if (courses.length == 0) {
       let val = [];
       let arr = fetchCourses();
+      let tempArr = [];
+      if (arr.length != 0) {
+        tempArr = arr.filter((course) => {
+          return course.key == "Events";
+        });
+        arr = arr.filter((course) => {
+          return course.key != "Events";
+        });
+      }
+      val = val.concat(tempArr);
       val = val.concat(arr);
       setCourses(val);
       setAllCourses(val);
@@ -253,6 +265,13 @@ export default function ProfDashboard() {
         setaddModule(true);
       }
     });
+
+    if (courseKey == "Events") {
+      setEventOpened(true);
+    } else {
+      setEventOpened(false);
+    }
+
     setQueryVisibility(true);
     setBackDisplay(true);
     console.log(location);
@@ -303,6 +322,16 @@ export default function ProfDashboard() {
 
     let val1 = [];
     let arr1 = fetchCourses();
+    let tempArr = [];
+    if (arr1.length != 0) {
+      tempArr = arr1.filter((course) => {
+        return course.key == "Events";
+      });
+      arr1 = arr1.filter((course) => {
+        return course.key != "Events";
+      });
+    }
+    val1 = val1.concat(tempArr);
     val1 = val1.concat(arr1);
     setCourses(val1);
     setAllCourses(val1);
@@ -482,6 +511,16 @@ export default function ProfDashboard() {
 
     let val1 = [];
     let arr1 = fetchCourses();
+    let tempArr = [];
+    if (arr1.length != 0) {
+      tempArr = arr1.filter((course) => {
+        return course.key == "Events";
+      });
+      arr1 = arr1.filter((course) => {
+        return course.key != "Events";
+      });
+    }
+    val1 = val1.concat(tempArr);
     val1 = val1.concat(arr1);
     setCourses(val1);
     setAllCourses(val1);
@@ -531,6 +570,16 @@ export default function ProfDashboard() {
 
     let val1 = [];
     let arr1 = fetchCourses();
+    let tempArr = [];
+    if (arr1.length != 0) {
+      tempArr = arr1.filter((course) => {
+        return course.key == "Events";
+      });
+      arr1 = arr1.filter((course) => {
+        return course.key != "Events";
+      });
+    }
+    val1 = val1.concat(tempArr);
     val1 = val1.concat(arr1);
     var indexKey = "";
     val1.map((course, i) => {
@@ -575,6 +624,16 @@ export default function ProfDashboard() {
 
       let val1 = [];
       let arr1 = fetchCourses();
+      let tempArr = [];
+      if (arr1.length != 0) {
+        tempArr = arr1.filter((course) => {
+          return course.key == "Events";
+        });
+        arr1 = arr1.filter((course) => {
+          return course.key != "Events";
+        });
+      }
+      val1 = val1.concat(tempArr);
       val1 = val1.concat(arr1);
       var indexKey = "";
       val1.map((course, i) => {
@@ -884,7 +943,7 @@ export default function ProfDashboard() {
                       setProfileDisplay(false);
                       setShowQueries(false);
                       setLocation("");
-                      setCourses(fetchCourses);
+                      setCourses(allCourses);
                       setaddModule(false);
                       setaddContent(false);
                       // setremoveModule(false);
@@ -901,7 +960,7 @@ export default function ProfDashboard() {
                           fontFamily: "Merriweather",
                         }}
                       >
-                        All Courses
+                        Resources
                       </span>
                     </div>
                   </li>
@@ -1152,7 +1211,7 @@ export default function ProfDashboard() {
                 color: "black",
                 float: "right",
                 marginTop: "0.5rem",
-                marginRight: "11rem",
+                marginRight: eventOpened ? "0rem" : "11rem",
                 width: "2rem",
                 height: "2rem",
                 display: backDisplay ? "block" : "none",
@@ -1194,9 +1253,15 @@ export default function ProfDashboard() {
                                 style={{ width: "5rem", height: "5rem" }}
                               />
                             </div>
-                            <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
-                              Module {i}
-                            </h2>
+                            {eventOpened ? (
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                {i == 0 ? "Seminar" : "Conferences"}
+                              </h2>
+                            ) : (
+                              <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
+                                Module {i}
+                              </h2>
+                            )}
                           </div>
                         </div>
                       )))
@@ -1285,7 +1350,12 @@ export default function ProfDashboard() {
                           <h2 class="text-lg text-gray-900 font-medium title-font mb-2">
                             {course.key}
                           </h2>
-                          <p class="leading-relaxed text-base">
+                          <p
+                            class="leading-relaxed text-base"
+                            style={{
+                              fontStyle: course.key == "Events" ? "italic" : "",
+                            }}
+                          >
                             {course.data["name"]}
                           </p>
                         </div>
@@ -1308,14 +1378,18 @@ export default function ProfDashboard() {
         </div>
         <div
           className={`${
-            openDetail ? (open == false ? "w-72" : "w-60") : "w-0"
+            openDetail && !eventOpened
+              ? open == false
+                ? "w-72"
+                : "w-60"
+              : "w-0"
           } flex flex-col h-screen`}
           style={{ height: "158vh" }}
         >
           <div
             style={{ backgroundColor: "#C490E4", height: "158vh" }}
             className={` ${
-              openDetail ? "translate-x-0" : "translate-x-full"
+              openDetail && !eventOpened ? "translate-x-0" : "translate-x-full"
             } flex-col h-screen p-3 duration-300 absolute right-0`}
           >
             <div className="space-y-4" style={{ marginTop: "5rem" }}>
