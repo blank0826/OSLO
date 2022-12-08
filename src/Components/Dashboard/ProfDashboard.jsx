@@ -113,7 +113,6 @@ export default function ProfDashboard() {
     borderColor: "#C490E4",
   };
 
-  
   const navigate = useNavigate();
 
   const refContainer = useRef(null);
@@ -123,7 +122,6 @@ export default function ProfDashboard() {
   const notifyRemoveDoc = () => toast("Content Removed Successfully!");
   const notifyAddingDoc = () => toast("Uploading, please wait!");
   const notifyAddedDoc = () => toast("Document added successfully!");
-  
 
   useEffect(() => {
     componentDidUpdate();
@@ -261,7 +259,7 @@ export default function ProfDashboard() {
 
   const openCCourse = (courseKey) => {
     taughtCourses.map((course) => {
-      if (course.key == courseKey) {
+      if (course.key == courseKey || courseKey == "Events") {
         setaddModule(true);
       }
     });
@@ -352,7 +350,7 @@ export default function ProfDashboard() {
     setaddModule(false);
 
     taughtCourses.map((course) => {
-      if (course.key == location) {
+      if (course.key == location || location == "Events") {
         setaddContent(true);
         // console.log(location);
       }
@@ -483,7 +481,7 @@ export default function ProfDashboard() {
 
   const handleYesAddModule = () => {
     taughtCourses.map((course) => {
-      if (course.key == location) {
+      if (course.key == location || location == "Events") {
         let arr = course.data.content;
         let max = 0;
         arr.map((module, i) => {
@@ -768,14 +766,20 @@ export default function ProfDashboard() {
               sx={{ color: "red", marginBottom: "0px" }}
             >
               {moduleIndex == 0
-                ? "Introductory module cannot be deleted"
+                ? eventOpened
+                  ? "Please note that removing a module will remove all the content in it."
+                  : "Introductory module cannot be deleted"
                 : "Please note that removing a module will remove all the content in it."}
             </DialogContentText>
           </DialogContent>
           <DialogActions sx={{ justifyContent: "space-around" }}>
             <Button onClick={handleOpenModule}>Open Module</Button>
             {moduleIndex == 0 ? (
-              ""
+              eventOpened ? (
+                <Button onClick={handleRemoveModule}>Remove Module</Button>
+              ) : (
+                ""
+              )
             ) : (
               <Button onClick={handleRemoveModule}>Remove Module</Button>
             )}
@@ -1161,7 +1165,7 @@ export default function ProfDashboard() {
                     // height: "4rem",
                     marginTop: "1rem",
                     marginBottom: "1rem",
-                    marginRight: "11rem",
+                    marginRight: eventOpened ? "2rem" : "11rem",
                     display: addModule ? "block" : "none",
                     background: "#C490E4",
                     fontSize: "18px",
@@ -1182,7 +1186,7 @@ export default function ProfDashboard() {
                       marginTop: "1rem",
                       // padding: "0.4rem",
                       marginBottom: "1rem",
-                      marginRight: "11rem",
+                      marginRight: eventOpened ? "2rem" : "11rem",
                       display: addContent ? "block" : "none",
                       background: "#C490E4",
                       fontSize: "18px",
@@ -1211,7 +1215,7 @@ export default function ProfDashboard() {
                 color: "black",
                 float: "right",
                 marginTop: "0.5rem",
-                marginRight: eventOpened ? "0rem" : "11rem",
+                marginRight: eventOpened ? "2rem" : "11rem",
                 width: "2rem",
                 height: "2rem",
                 display: backDisplay ? "block" : "none",
@@ -1240,7 +1244,9 @@ export default function ProfDashboard() {
                             class="p-6 rounded-lg cursor-pointer"
                             onClick={() => {
                               taughtCourses.filter((course) => {
-                                return course.key == location;
+                                return (
+                                  course.key == location || location == "Events"
+                                );
                               }).length > 0
                                 ? removeOrOpenModule(i)
                                 : openFCourse(i);
@@ -1283,7 +1289,14 @@ export default function ProfDashboard() {
                                 taughtCourses.filter((course) => {
                                   return (
                                     course.key ==
-                                    location.substring(0, location.indexOf("/"))
+                                      location.substring(
+                                        0,
+                                        location.indexOf("/")
+                                      ) ||
+                                    location.substring(
+                                      0,
+                                      location.indexOf("/")
+                                    ) == "Events"
                                   );
                                 }).length > 0
                                   ? handleOpenRemoveOrDownloadDoc(i)
@@ -1303,7 +1316,8 @@ export default function ProfDashboard() {
                                   <GrDocumentWord
                                     style={{ width: "5rem", height: "5rem" }}
                                   />
-                                ) : course.format == "ppt" ? (
+                                ) : course.format == "ppt" ||
+                                  course.format == "pptx" ? (
                                   <GrDocumentPpt
                                     style={{ width: "5rem", height: "5rem" }}
                                   />

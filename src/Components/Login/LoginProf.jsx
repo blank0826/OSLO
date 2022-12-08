@@ -109,9 +109,9 @@ export default function LoginProf() {
           onClick={goBack}
           style={{
             color: "black",
-            float: "right",
+            float: "left",
             marginTop: "0.5rem",
-            marginRight: "0rem",
+            strokeWidth: "0.1rem",
             width: "2rem",
             height: "2rem",
             display: "block",

@@ -739,7 +739,7 @@ export default function UserDashboard() {
                 color: "black",
                 float: "right",
                 marginTop: "0.5rem",
-                marginRight: eventOpened ? "0rem" : "11rem",
+                marginRight: eventOpened ? "2rem" : "11rem",
                 width: "2rem",
                 height: "2rem",
                 display: backDisplay ? "block" : "none",
@@ -822,7 +822,8 @@ export default function UserDashboard() {
                                   <GrDocumentWord
                                     style={{ width: "5rem", height: "5rem" }}
                                   />
-                                ) : course.format == "ppt" ? (
+                                ) : course.format == "ppt" ||
+                                  course.format == "pptx" ? (
                                   <GrDocumentPpt
                                     style={{ width: "5rem", height: "5rem" }}
                                   />

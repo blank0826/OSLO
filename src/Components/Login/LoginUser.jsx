@@ -118,9 +118,9 @@ export default function LoginUser() {
           onClick={goBack}
           style={{
             color: "black",
-            float: "right",
+            float: "left",
+            strokeWidth: "0.1rem",
             marginTop: "0.5rem",
-            marginRight: "0rem",
             width: "2rem",
             height: "2rem",
             display: "block",
