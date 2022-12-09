@@ -184,7 +184,7 @@ export default function ProfProfile({ taughtCourses }) {
                       class="title-font font-medium text-2xl text-gray-900"
                       style={{ fontFamily: "Merriweather" }}
                     >
-                      LastLogin:&nbsp;&nbsp;
+                      Last Login:&nbsp;&nbsp;
                     </span>
                     <span
                       class="title-font font-medium text-xl text-gray-500"

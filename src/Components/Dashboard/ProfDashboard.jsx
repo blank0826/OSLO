@@ -312,7 +312,7 @@ export default function ProfDashboard() {
     val.map((courses) => {
       taughtCSelect.push({
         value: courses.key,
-        label: courses.key,
+        label: courses.key + " - " + courses.data.name,
         isFixed: true,
       });
     });
@@ -501,7 +501,7 @@ export default function ProfDashboard() {
     val.map((courses) => {
       taughtCSelect.push({
         value: courses.key,
-        label: courses.key,
+        label: courses.key + " - " + courses.data.name,
         isFixed: true,
       });
     });
@@ -560,7 +560,7 @@ export default function ProfDashboard() {
     val.map((courses) => {
       taughtCSelect.push({
         value: courses.key,
-        label: courses.key,
+        label: courses.key + " - " + courses.data.name,
         isFixed: true,
       });
     });
@@ -614,7 +614,7 @@ export default function ProfDashboard() {
       val.map((courses) => {
         taughtCSelect.push({
           value: courses.key,
-          label: courses.key,
+          label: courses.key + " - " + courses.data.name,
           isFixed: true,
         });
       });
